@@ -1561,20 +1561,30 @@
       try {
         const resp = await fetch(SHEETS_URL + "?action=getAll", { redirect: "follow" });
         const json = await resp.json();
-        if (json.ok && Array.isArray(json.data)) {
-          // Añadir id incremental a cada fila para compatibilidad con el resto del código
+        if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+          // Sheet tiene datos → es la fuente de verdad
           registros = json.data.map((r, i) => ({ ...r, id: i + 1, beetrackCreada: !!r.beetrackCreada }));
           localStorage.setItem('catex_registros', JSON.stringify(registros));
           actualizarDash();
           const now = new Date().toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
           g("dashSub").textContent = registros.length + " registros · actualizado " + now;
+        } else if (json.ok && Array.isArray(json.data) && json.data.length === 0 && registros.length > 0) {
+          // Sheet devolvió vacío pero hay datos locales → proteger datos, no sobreescribir
+          actualizarDash();
+          g("dashSub").textContent = registros.length + " registros (locales) · sheet vacío";
+        } else if (registros.length > 0) {
+          // Respuesta inesperada pero hay datos locales → mantener
+          actualizarDash();
+          g("dashSub").textContent = registros.length + " registros (locales)";
         } else {
-          g("dashSub").textContent = "Error al cargar datos del Sheet";
+          g("dashSub").textContent = "Sin registros aún";
         }
       } catch(err) {
-        // Fallback: usar localStorage si falla la red
-        g("dashSub").textContent = "Sin conexión — mostrando datos locales";
+        // Error de red → usar localStorage sin borrar nada
         actualizarDash();
+        g("dashSub").textContent = registros.length > 0
+          ? registros.length + " registros (sin conexión)"
+          : "Sin conexión al Sheet";
       }
     }
 
