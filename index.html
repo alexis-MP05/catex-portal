@@ -1284,7 +1284,8 @@
     const DASHBOARD_PWD = "catex2026";
 
     /* ===== ESTADO ===== */
-    let d1 = {}, d2 = {}, dias = [], registros = [];
+    let d1 = {}, d2 = {}, dias = [];
+    let registros = JSON.parse(localStorage.getItem('catex_registros') || '[]');
 
     const STEP_LABELS = [
       "Paso 1 — Datos personales",
@@ -1429,6 +1430,7 @@
       const datos = { ...d1, ...d2, dias, estado: "completo", beetrack: false };
       await enviarASheets(datos);
       registros.push({ ...datos, id: Date.now(), beetrackCreada: false });
+      localStorage.setItem('catex_registros', JSON.stringify(registros));
       await new Promise(r => setTimeout(r, 1500));
       g("loadOv").classList.remove("on");
       mostrarPerfil(datos);
@@ -1576,6 +1578,7 @@
     function toggleBee(i) {
       registros[i].beetrackCreada = !registros[i].beetrackCreada;
       g("bLbl_" + i).textContent = registros[i].beetrackCreada ? "Creada" : "Pendiente";
+      localStorage.setItem('catex_registros', JSON.stringify(registros));
       actualizarDash();
     }
 
