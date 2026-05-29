@@ -1413,12 +1413,6 @@
       try {
         const params = new URLSearchParams({ data: JSON.stringify(datos) });
         const url = SHEETS_URL + "?" + params.toString();
-
-        // Método imagen invisible — más confiable sin CORS
-        const img = new Image();
-        img.src = url;
-
-        // Fetch GET como respaldo
         fetch(url, { method: "GET", mode: "no-cors" }).catch(() => {});
       } catch(err) {
         console.warn("Sheets error:", err);
