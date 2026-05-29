@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CATEX — Portal de Ingreso de Drivers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --green-dark:   #085041;
+    --green-mid:    #0F6E56;
+    --green-base:   #1D9E75;
+    --green-light:  #5DCAA5;
+    --green-pale:   #E1F5EE;
+    --amber-dark:   #633806;
+    --amber-mid:    #854F0B;
+    --amber-pale:   #FAEEDA;
+    --red-dark:     #791F1F;
+    --red-pale:     #FCEBEB;
+    --blue-mid:     #185FA5;
+    --blue-pale:    #E6F1FB;
+    --gray-100:     #F5F4F0;
+    --gray-200:     #E8E7E2;
+    --gray-400:     #B0AFA8;
+    --gray-600:     #5F5E5A;
+    --gray-900:     #1A1A18;
+    --text:         #1A1A18;
+    --text-2:       #5F5E5A;
+    --text-3:       #9B9A94;
+    --border:       rgba(0,0,0,0.1);
+    --border-2:     rgba(0,0,0,0.18);
+    --bg:           #F5F4F0;
+    --card:         #FFFFFF;
+    --radius:       10px;
+    --radius-lg:    14px;
+    --font:         'DM Sans', sans-serif;
+    --mono:         'DM Mono', monospace;
+  }
+ 
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+ 
+  /* NAV */
+  .nav {
+    background: var(--green-mid);
+    padding: 0 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 54px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .nav-pill {
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px; padding: 2px 8px;
+    font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #fff;
+  }
+  .nav-tabs { display: flex; gap: 4px; }
+  .ntab {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 7px; padding: 5px 14px;
+    font-size: 12px; font-weight: 500;
+    color: rgba(255,255,255,0.75); cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--font);
+    transition: background 0.15s, color 0.15s;
+  }
+  .ntab.on { background: rgba(255,255,255,0.25); color: #fff; }
+  .ntab:hover { background: rgba(255,255,255,0.2); color: #fff; }
+ 
+  /* VIEWS */
+  .view { display: none; }
+  .view.on { display: block; }
+ 
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+    padding: 1.75rem 1.25rem 1.5rem; color: #fff;
+  }
+  .hero h1 { font-size: 20px; font-weight: 600; }
+  .hero p { font-size: 13px; opacity: 0.8; margin-top: 3px; }
+  .prog-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px; height: 4px; margin-top: 1.1rem; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%; background: #fff; border-radius: 99px;
+    transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  .prog-lbl { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+ 
+  /* STEP TABS */
+  .stabs {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.25rem; display: flex; overflow-x: auto; gap: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .stabs::-webkit-scrollbar { display: none; }
+  .stab {
+    padding: 11px 14px; font-size: 12px; font-weight: 500;
+    color: var(--text-3); border-bottom: 2px solid transparent;
+    cursor: pointer; white-space: nowrap;
+    display: flex; align-items: center; gap: 5px;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: var(--font);
+    transition: color 0.15s;
+  }
+  .stab.on { color: var(--green-mid); border-bottom-color: var(--green-mid); }
+  .stab.done { color: var(--green-base); }
+  .stab .ck {
+    width: 14px; height: 14px; background: var(--green-base);
+    border-radius: 50%; display: inline-flex; align-items: center;
+    justify-content: center; font-size: 8px; color: #fff;
+  }
+ 
+  /* CONTENT */
+  .sc {
+    padding: 1.5rem 1.25rem;
+    max-width: 580px; margin: 0 auto;
+  }
+ 
+  .stitle { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .ssub { font-size: 12px; color: var(--text-2); margin-bottom: 1.4rem; }
+ 
+  /* FORMS */
+  .fg { margin-bottom: 1.1rem; }
+  .fl {
+    font-size: 12px; color: var(--text-2); font-weight: 500;
+    margin-bottom: 5px; display: block;
+  }
+  .fl .req { color: #E24B4A; margin-left: 1px; }
+  input[type=text], input[type=email], input[type=tel] {
+    width: 100%;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    font-size: 13px;
+    background: var(--card);
+    color: var(--text);
+    font-family: var(--font);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--green-base);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+  }
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+  .warn-box {
+    background: var(--amber-pale); border-radius: var(--radius);
+    padding: 9px 11px; margin-top: 8px;
+    font-size: 12px; color: var(--amber-dark);
+    display: flex; align-items: flex-start; gap: 7px;
+    border: 1px solid rgba(186,117,23,0.2);
+  }
+  .warn-box i { flex-shrink: 0; margin-top: 1px; font-size: 15px; }
+  .err-box {
+    background: var(--red-pale); border-radius: var(--radius);
+    padding: 9px 11px; margin-bottom: 1rem;
+    font-size: 12px; color: var(--red-dark);
+    display: flex; align-items: center; gap: 7px;
+    border: 1px solid rgba(162,45,45,0.2);
+    display: none;
+  }
+ 
+  /* CIUDADES */
+  .city-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr));
+    gap: 7px; margin-top: 7px;
+  }
+  .city-chip {
+    border: 1px solid var(--border-2); background: var(--card);
+    border-radius: var(--radius); padding: 8px 10px;
+    font-size: 12px; cursor: pointer; color: var(--text-2);
+    text-align: left; display: flex; align-items: center;
+    justify-content: space-between;
+    font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .city-chip:hover { border-color: var(--green-light); background: var(--green-pale); color: var(--green-dark); }
+  .city-chip.sel { background: var(--green-pale); border-color: var(--green-base); color: var(--green-dark); font-weight: 500; }
+  .city-code { font-size: 10px; font-family: var(--mono); opacity: 0.6; }
+ 
+  /* DIAS */
+  .dias-g { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-top: 7px; }
+  .dia {
+    border: 1px solid var(--border-2); background: var(--card);
+    border-radius: var(--radius); padding: 9px 2px;
+    font-size: 11px; font-weight: 500; text-align: center;
+    cursor: pointer; color: var(--text-2);
+    font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .dia:hover { border-color: var(--green-light); background: var(--green-pale); }
+  .dia.sel { background: var(--green-pale); border-color: var(--green-base); color: var(--green-dark); font-weight: 600; }
+ 
+  /* PATENTE BLOCK */
+  .pat-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem;
+    margin-bottom: 10px; background: var(--card);
+  }
+  .pat-hdr {
+    font-size: 12px; font-weight: 600; color: var(--text-2);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 5px;
+  }
+ 
+  /* RECURSOS */
+  .res-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg); background: var(--card);
+    padding: 1rem 1.1rem; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .res-icon {
+    width: 40px; height: 40px; border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; flex-shrink: 0;
+  }
+  .ri-g { background: var(--green-pale); color: var(--green-mid); }
+  .ri-a { background: var(--amber-pale); color: var(--amber-mid); }
+  .ri-b { background: var(--blue-pale); color: var(--blue-mid); }
+  .ri-r { background: var(--red-pale); color: var(--red-dark); }
+  .res-info { flex: 1; }
+  .res-info h4 { font-size: 13px; font-weight: 600; color: var(--text); }
+  .res-info p { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .res-btn {
+    border: 1px solid var(--border-2); background: transparent;
+    border-radius: var(--radius); padding: 7px 13px;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    color: var(--text); white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
+    text-decoration: none; font-family: var(--font);
+    transition: background 0.15s;
+  }
+  .res-btn:hover { background: var(--gray-100); }
+  .res-btn.done { background: var(--green-pale); color: var(--green-dark); border-color: var(--green-light); }
+ 
+  /* ANDROID NOTICE */
+  .android-notice {
+    background: var(--red-pale); border: 1px solid rgba(162,45,45,0.2);
+    border-radius: var(--radius); padding: 9px 11px; margin-bottom: 12px;
+    font-size: 12px; color: var(--red-dark);
+    display: flex; align-items: center; gap: 7px;
+  }
+ 
+  /* QUIZ BANNER */
+  .quiz-banner {
+    background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+    border-radius: var(--radius-lg); padding: 1.1rem;
+    color: #fff; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .quiz-banner i { font-size: 28px; flex-shrink: 0; }
+  .quiz-banner h3 { font-size: 14px; font-weight: 600; }
+  .quiz-banner p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+ 
+  /* CHECKBOX */
+  .check-row {
+    border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 13px;
+    margin-top: 10px; display: flex; align-items: center; gap: 10px;
+    background: var(--card);
+  }
+  .check-row label { font-size: 13px; color: var(--text-2); cursor: pointer; flex: 1; }
+  .check-row input[type=checkbox] {
+    width: 17px; height: 17px; accent-color: var(--green-mid);
+    cursor: pointer; flex-shrink: 0;
+  }
+ 
+  /* BOTONES */
+  .btn-p {
+    background: var(--green-mid); color: #fff;
+    border: none; border-radius: var(--radius); padding: 12px 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    margin-top: 1.4rem; font-family: var(--font);
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-p:hover { background: var(--green-dark); }
+  .btn-p:active { transform: scale(0.98); }
+  .btn-p:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+  .btn-s {
+    background: transparent; border: 1px solid var(--border-2);
+    border-radius: var(--radius); padding: 11px 20px;
+    font-size: 13px; cursor: pointer; color: var(--text);
+    width: 100%; display: flex; align-items: center;
+    justify-content: center; gap: 7px; margin-top: 8px;
+    font-family: var(--font); transition: background 0.15s;
+  }
+  .btn-s:hover { background: var(--gray-100); }
+ 
+  /* PERFIL FINAL */
+  .success-wrap { text-align: center; padding: .75rem 0 1.5rem; }
+  .success-icon {
+    width: 56px; height: 56px; background: var(--green-pale);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 12px;
+    font-size: 26px; color: var(--green-mid);
+  }
+  .perf-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--card); padding: 1.1rem; margin-bottom: 1rem;
+  }
+  .perf-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--green-pale); display: flex; align-items: center;
+    justify-content: center; font-size: 14px; font-weight: 600;
+    color: var(--green-dark); flex-shrink: 0;
+  }
+  .badge-ok {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 9px; border-radius: 99px;
+    font-size: 11px; font-weight: 600;
+    background: var(--green-pale); color: var(--green-dark);
+  }
+  .cl { list-style: none; }
+  .cl li {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--text-2);
+  }
+  .cl li:last-child { border: none; }
+  .cl li.ok { color: var(--text); }
+  .cl li.ok i { color: var(--green-base); }
+  .cl li.pend i { color: #BA7517; }
+ 
+  /* DASHBOARD */
+  .dw { padding: 1.25rem; max-width: 1000px; margin: 0 auto; }
+  .metrics {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap: 10px; margin-bottom: 1.4rem;
+  }
+  .mc {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem;
+  }
+  .mc-lbl { font-size: 11px; color: var(--text-2); font-weight: 500; margin-bottom: 4px; }
+  .mc-val { font-size: 26px; font-weight: 600; color: var(--text); }
+  .mc-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .dtbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; gap: 8px; flex-wrap: wrap;
+  }
+  .dtbar h2 { font-size: 15px; font-weight: 600; }
+  .dsrch {
+    flex: 1; min-width: 140px; max-width: 260px;
+    border: 1px solid var(--border-2); border-radius: var(--radius);
+    padding: 7px 11px; font-size: 12px;
+    background: var(--card); color: var(--text); font-family: var(--font);
+  }
+  .dsrch:focus { outline: none; border-color: var(--green-base); }
+  .exp-btn {
+    border: 1px solid var(--border-2); background: var(--card);
+    border-radius: var(--radius); padding: 7px 13px;
+    font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    color: var(--text); font-family: var(--font);
+    font-weight: 500; transition: background 0.15s;
+  }
+  .exp-btn:hover { background: var(--gray-100); }
+  .tbl-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+  .dt {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; background: var(--card);
+  }
+  .dt th {
+    text-align: left; padding: 9px 13px; font-size: 11px;
+    font-weight: 600; color: var(--text-2);
+    background: var(--gray-100); border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .dt td {
+    padding: 10px 13px; border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: middle;
+  }
+  .dt tr:last-child td { border: none; }
+  .dt tbody tr:hover td { background: var(--gray-100); }
+  .sbadge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: 99px;
+    font-size: 10px; font-weight: 600;
+  }
+  .b-ok  { background: var(--green-pale); color: var(--green-dark); }
+  .b-par { background: var(--amber-pale); color: var(--amber-dark); }
+  .b-ini { background: var(--gray-200);   color: var(--gray-600); }
+  .b-pnd { background: var(--red-pale);   color: var(--red-dark); }
+  .vchip {
+    background: var(--gray-100); border: 1px solid var(--border);
+    border-radius: 4px; padding: 2px 7px;
+    font-size: 10px; font-weight: 600; font-family: var(--mono);
+    letter-spacing: 0.8px; display: inline-block;
+  }
+  .dmini { display: flex; gap: 2px; }
+  .dd {
+    width: 17px; height: 17px; border-radius: 3px;
+    background: var(--gray-200); color: var(--text-3);
+    font-size: 8px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dd.sel { background: var(--green-pale); color: var(--green-dark); }
+ 
+  /* MODAL */
+  .ov {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.4);
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .ov.open { display: flex; }
+  .mbox {
+    background: var(--card); border-radius: var(--radius-lg);
+    border: 1px solid var(--border); padding: 1.4rem;
+    width: 100%; max-width: 460px;
+    max-height: 88vh; overflow-y: auto;
+    animation: mIn 0.2s ease;
+  }
+  @keyframes mIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  .mhdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+  .mhdr h3 { font-size: 16px; font-weight: 600; }
+  .mcl { background: none; border: none; cursor: pointer; color: var(--text-2); font-size: 18px; display: flex; align-items: center; }
+  .sect-div { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; margin: 1rem 0 .4rem; }
+  .drow { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 10px; }
+  .drow:last-child { border: none; }
+  .dl { color: var(--text-2); flex-shrink: 0; }
+  .dv { color: var(--text); text-align: right; }
+  .bts { display: flex; align-items: center; justify-content: space-between; background: var(--gray-100); border-radius: var(--radius); padding: 9px 12px; margin-top: 1rem; gap: 8px; border: 1px solid var(--border); }
+  .btl { font-size: 12px; font-weight: 600; }
+  .btog { display: flex; gap: 5px; }
+  .bb { padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border-2); background: var(--card); color: var(--text-2); font-family: var(--font); transition: all 0.15s; }
+  .bb:hover { background: var(--gray-100); }
+  .bb.ay { background: var(--green-pale); color: var(--green-dark); border-color: var(--green-light); }
+  .bb.an { background: var(--red-pale); color: var(--red-dark); border-color: #F0997B; }
+ 
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--green-dark); color: #fff;
+    padding: 10px 18px; border-radius: var(--radius);
+    font-size: 12px; font-weight: 500; z-index: 999;
+    display: flex; align-items: center; gap: 7px;
+    opacity: 0; transition: opacity 0.25s; pointer-events: none;
+    white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  .toast.show { opacity: 1; }
+ 
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .frow { grid-template-columns: 1fr; }
+    .city-grid { grid-template-columns: repeat(2,1fr); }
+    .dias-g { gap: 4px; }
+    .dia { padding: 8px 1px; font-size: 10px; }
+    .metrics { grid-template-columns: repeat(2,1fr); }
+    .ntab span { display: none; }
+  }
+</style>
+</head>
+<body>
+ 
+<nav class="nav">
+  <div class="nav-logo">
+    <span class="nav-pill">CATEX</span>
+    Portal de Ingreso
+  </div>
+  <div class="nav-tabs">
+    <button class="ntab on" id="t-drv" onclick="sv('drv')">
+      <i class="ti ti-truck"></i> <span>Driver</span>
+    </button>
+    <button class="ntab" id="t-dsh" onclick="sv('dsh')">
+      <i class="ti ti-layout-dashboard"></i> <span>Dashboard</span>
+    </button>
+  </div>
+</nav>
+ 
+<!-- ═══════════════ DRIVER VIEW ═══════════════ -->
+<div class="view on" id="v-drv">
+  <div class="hero">
+    <h1>Bienvenido a CATEX</h1>
+    <p>Completa todos los pasos para comenzar a operar</p>
+    <div class="prog-wrap"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+    <div class="prog-lbl" id="pl">Paso 1 de 5 — Datos personales</div>
+  </div>
+ 
+  <div class="stabs">
+    <button class="stab on" id="tab0" onclick="gs(0)"><i class="ti ti-user"></i> Datos</button>
+    <button class="stab"    id="tab1" onclick="gs(1)"><i class="ti ti-car"></i> Vehículo</button>
+    <button class="stab"    id="tab2" onclick="gs(2)"><i class="ti ti-calendar"></i> Días</button>
+    <button class="stab"    id="tab3" onclick="gs(3)"><i class="ti ti-book"></i> Inducción</button>
+    <button class="stab"    id="tab4" onclick="gs(4)"><i class="ti ti-certificate"></i> Quiz</button>
+  </div>
+ 
+  <!-- STEP 0: Datos personales -->
+  <div class="sc" id="s0">
+    <p class="stitle">Datos personales</p>
+    <p class="ssub">Esta información se usará para crear tu cuenta en Beetrack</p>
+    <div id="err0" class="err-box"><i class="ti ti-alert-circle"></i> Completa todos los campos obligatorios</div>
+ 
+    <div class="fg">
+      <label class="fl">Nombre completo <span class="req">*</span></label>
+      <input type="text" id="fn" placeholder="Ej: Juan Andrés Pérez Soto" autocomplete="name">
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="fl">RUT <span class="req">*</span></label>
+        <input type="text" id="fr" placeholder="12.345.678-9">
+      </div>
+      <div class="fg">
+        <label class="fl">Celular <span class="req">*</span></label>
+        <input type="tel" id="ft" placeholder="+56 9 1234 5678" autocomplete="tel">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Correo electrónico <span class="req">*</span></label>
+      <input type="email" id="fe" placeholder="correo@ejemplo.com" autocomplete="email">
+      <p class="hint">Se usará para crear tu usuario en Beetrack</p>
+    </div>
+    <div class="fg">
+      <label class="fl">Sucursal / Ciudad donde operas <span class="req">*</span></label>
+      <div class="city-grid">
+        <button class="city-chip" onclick="selCity(this)" data-c="Viña del Mar"  data-l="L58">Viña del Mar   <span class="city-code">L58</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Rancagua"      data-l="L35">Rancagua       <span class="city-code">L35</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Iquique"       data-l="L679">Iquique        <span class="city-code">L679</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Chillán"       data-l="L6010">Chillán       <span class="city-code">L6010</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Temuco"        data-l="L6004">Temuco        <span class="city-code">L6004</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Antofagasta"   data-l="L6003">Antofagasta   <span class="city-code">L6003</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Concón"        data-l="L747">Concón         <span class="city-code">L747</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Puerto Montt"  data-l="L99">Puerto Montt   <span class="city-code">L99</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Valdivia"      data-l="L94">Valdivia       <span class="city-code">L94</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Calama"        data-l="L33">Calama         <span class="city-code">L33</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Santiago"      data-l="RM">Santiago        <span class="city-code">RM</span></button>
+        <button class="city-chip" onclick="selCity(this)" data-c="Concepción"    data-l="L89">Concepción    <span class="city-code">L89</span></button>
+      </div>
+    </div>
+    <button class="btn-p" onclick="ns(0)">Continuar <i class="ti ti-arrow-right"></i></button>
+  </div>
+ 
+  <!-- STEP 1: Vehículo -->
+  <div class="sc" id="s1" style="display:none">
+    <p class="stitle">Datos del vehículo</p>
+    <p class="ssub">Un vehículo por chofer. Si eres dueño con múltiples vehículos, cada chofer hace su propio registro.</p>
+    <div id="err1" class="err-box"><i class="ti ti-alert-circle"></i> Completa todos los campos obligatorios del vehículo</div>
+    <div id="pats">
+      <div class="pat-block" id="p0">
+        <div class="pat-hdr"><i class="ti ti-license"></i> Datos del chofer y vehículo</div>
+        <div class="fg">
+          <label class="fl">Nombre del chofer <span class="req">*</span></label>
+          <input type="text" class="pc" placeholder="Nombre completo del chofer">
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label class="fl">RUT del chofer <span class="req">*</span></label>
+            <input type="text" class="prut" placeholder="12.345.678-9">
+          </div>
+          <div class="fg">
+            <label class="fl">Celular del chofer <span class="req">*</span></label>
+            <input type="tel" class="pcel" placeholder="+56 9 XXXX XXXX">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Patente <span class="req">*</span></label>
+          <input type="text" class="pp" placeholder="ABCD12" style="font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase">
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label class="fl">Marca</label>
+            <input type="text" class="pm" placeholder="Ej: Mercedes">
+          </div>
+          <div class="fg">
+            <label class="fl">Modelo</label>
+            <input type="text" class="pmo" placeholder="Ej: Sprinter">
+          </div>
+        </div>
+        <div class="warn-box">
+          <i class="ti ti-alert-triangle"></i>
+          <span><strong>Dimensiones INTERIORES de la carrocería.</strong> No copies las medidas de internet — son las del vehículo completo. Mide el espacio de carga por dentro.</span>
+        </div>
+        <div class="frow" style="margin-top:12px">
+          <div class="fg">
+            <label class="fl">Alto interior (cm) <span class="req">*</span></label>
+            <input type="text" class="pa" placeholder="Ej: 180">
+          </div>
+          <div class="fg">
+            <label class="fl">Largo interior (cm) <span class="req">*</span></label>
+            <input type="text" class="pla" placeholder="Ej: 300">
+          </div>
+        </div>
+        <div class="fg" style="max-width:calc(50% - 5px)">
+          <label class="fl">Ancho interior (cm) <span class="req">*</span></label>
+          <input type="text" class="pw" placeholder="Ej: 165">
+        </div>
+      </div>
+    </div>
+    <button class="btn-p" onclick="ns(1)" style="margin-top:.5rem">Continuar <i class="ti ti-arrow-right"></i></button>
+    <button class="btn-s" onclick="gs(0)"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+ 
+  <!-- STEP 2: Disponibilidad -->
+  <div class="sc" id="s2" style="display:none">
+    <p class="stitle">Disponibilidad semanal</p>
+    <p class="ssub">Selecciona los días en que normalmente puedes prestar servicio</p>
+    <div id="err2" class="err-box"><i class="ti ti-alert-circle"></i> Selecciona al menos un día disponible</div>
+    <div class="fg">
+      <label class="fl">Días disponibles <span class="req">*</span></label>
+      <div class="dias-g">
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Lun">Lun</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Mar">Mar</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Mié">Mié</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Jue">Jue</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Vie">Vie</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Sáb">Sáb</button>
+        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Dom">Dom</button>
+      </div>
+    </div>
+    <button class="btn-p" onclick="ns(2)">Continuar <i class="ti ti-arrow-right"></i></button>
+    <button class="btn-s" onclick="gs(1)"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+ 
+  <!-- STEP 3: Inducción -->
+  <div class="sc" id="s3" style="display:none">
+    <p class="stitle">Material de inducción</p>
+    <p class="ssub">Revisa los tres recursos antes de continuar al quiz de certificación</p>
+ 
+    <div class="android-notice">
+      <i class="ti ti-brand-android"></i>
+      <span><strong>Solo Android.</strong> Beetrack no está disponible en iPhone. Si tienes iOS, avísale a tu supervisor antes de continuar.</span>
+    </div>
+ 
+    <div class="res-card">
+      <div class="res-icon ri-g"><i class="ti ti-clipboard-list"></i></div>
+      <div class="res-info">
+        <h4>Instructivo completo CATEX</h4>
+        <p>Operación, protocolos, EPP y video resumen del servicio</p>
+      </div>
+      <a class="res-btn" id="rb1"
+         href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec"
+         target="_blank" rel="noopener" onclick="mr('r1',this)">
+        <i class="ti ti-external-link"></i> Abrir
+      </a>
+    </div>
+ 
+    <div class="res-card">
+      <div class="res-icon ri-a"><i class="ti ti-file-text"></i></div>
+      <div class="res-info">
+        <h4>Instructivo primer día</h4>
+        <p>Lo más importante para tu primera jornada de reparto</p>
+      </div>
+      <a class="res-btn" id="rb2"
+         href="https://drive.google.com/file/d/1irNHKG_cNBcPoPLLHJ9mKBJR_LLKqmGI/view?usp=sharing"
+         target="_blank" rel="noopener" onclick="mr('r2',this)">
+        <i class="ti ti-download"></i> Descargar
+      </a>
+    </div>
+ 
+    <div class="res-card">
+      <div class="res-icon ri-b"><i class="ti ti-brand-google-play"></i></div>
+      <div class="res-info">
+        <h4>App Beetrack (solo Android)</h4>
+        <p>Descarga la app que usarás para gestionar tus envíos</p>
+      </div>
+      <a class="res-btn" id="rb3"
+         href="https://play.google.com/store/apps/details?id=me.beelink.beetrack2&pcampaignid=web_share"
+         target="_blank" rel="noopener" onclick="mr('r3',this)">
+        <i class="ti ti-download"></i> Descargar
+      </a>
+    </div>
+ 
+    <button class="btn-p" onclick="ns(3)">Ir al quiz <i class="ti ti-arrow-right"></i></button>
+    <button class="btn-s" onclick="gs(2)"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+ 
+  <!-- STEP 4: Quiz -->
+  <div class="sc" id="s4" style="display:none">
+    <div class="quiz-banner">
+      <i class="ti ti-certificate"></i>
+      <div>
+        <h3>Quiz de certificación CATEX</h3>
+        <p>Completa el quiz y firma. Al terminar, vuelve aquí y confirma.</p>
+      </div>
+    </div>
+ 
+    <div class="res-card">
+      <div class="res-icon ri-g"><i class="ti ti-pencil"></i></div>
+      <div class="res-info">
+        <h4>Rendir quiz ahora</h4>
+        <p>Se abrirá en una nueva ventana. Regresa aquí al finalizar.</p>
+      </div>
+      <a class="res-btn"
+         href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec"
+         target="_blank" rel="noopener">
+        <i class="ti ti-external-link"></i> Ir al quiz
+      </a>
+    </div>
+ 
+    <div class="check-row">
+      <input type="checkbox" id="qck" onchange="qchk(this)">
+      <label for="qck">Confirmo que completé el quiz y lo firmé digitalmente</label>
+    </div>
+ 
+    <button class="btn-p" id="bfin" onclick="fin()" disabled>
+      <i class="ti ti-check"></i> Finalizar registro
+    </button>
+    <button class="btn-s" onclick="gs(3)"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+ 
+  <!-- PERFIL FINAL -->
+  <div class="sc" id="sp" style="display:none">
+    <div class="success-wrap">
+      <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+      <p style="font-size:16px;font-weight:600">¡Registro completado!</p>
+      <p style="font-size:12px;color:var(--text-2);margin-top:4px">Tu supervisor revisará tu información y te enviará el acceso a Beetrack</p>
+    </div>
+    <div class="perf-card">
+      <div class="perf-hdr">
+        <div class="avatar" id="pav">DC</div>
+        <div>
+          <p style="font-weight:600;font-size:14px" id="pnm">—</p>
+          <p style="font-size:11px;color:var(--text-2)" id="pct">—</p>
+        </div>
+        <div style="margin-left:auto"><span class="badge-ok"><i class="ti ti-check"></i> Completo</span></div>
+      </div>
+      <ul class="cl">
+        <li class="ok"><i class="ti ti-check"></i> Datos personales registrados</li>
+        <li class="ok"><i class="ti ti-check"></i> Vehículo ingresado</li>
+        <li class="ok"><i class="ti ti-check"></i> Disponibilidad confirmada</li>
+        <li class="ok"><i class="ti ti-check"></i> Material de inducción revisado</li>
+        <li class="ok"><i class="ti ti-check"></i> Quiz completado y firmado</li>
+        <li class="pend"><i class="ti ti-clock"></i> Cuenta Beetrack — tu supervisor la creará pronto</li>
+      </ul>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
+<div class="view" id="v-dsh">
+  <div class="dw">
+    <div class="metrics">
+      <div class="mc"><div class="mc-lbl">Total registrados</div><div class="mc-val" id="mt">0</div><div class="mc-sub">drivers</div></div>
+      <div class="mc"><div class="mc-lbl">Completos</div><div class="mc-val" id="mc2" style="color:var(--green-base)">0</div><div class="mc-sub">quiz aprobado</div></div>
+      <div class="mc"><div class="mc-lbl">En proceso</div><div class="mc-val" id="mpr" style="color:#BA7517">0</div><div class="mc-sub">faltan pasos</div></div>
+      <div class="mc"><div class="mc-lbl">Sin Beetrack</div><div class="mc-val" id="mb" style="color:#E24B4A">0</div><div class="mc-sub">cuenta pendiente</div></div>
+    </div>
+ 
+    <div class="dtbar">
+      <h2>Drivers registrados</h2>
+      <input class="dsrch" type="text" id="ds" placeholder="Buscar nombre, patente, ciudad…" oninput="rt()">
+      <button class="exp-btn" onclick="expCSV()"><i class="ti ti-download"></i> Exportar CSV</button>
+    </div>
+ 
+    <div class="tbl-wrap">
+      <table class="dt">
+        <thead><tr>
+          <th>Driver</th><th>RUT</th><th>Correo</th><th>Patente</th>
+          <th>Ciudad / Local</th><th>Días</th><th>Estado</th><th>Beetrack</th><th></th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL -->
+<div class="ov" id="ov">
+  <div class="mbox">
+    <div class="mhdr">
+      <h3 id="mtt">Detalle driver</h3>
+      <button class="mcl" onclick="cm()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="mb2"></div>
+  </div>
+</div>
+ 
+<div class="toast" id="tst"><i class="ti ti-check"></i><span id="tm"></span></div>
+ 
+<script>
+const DIAS_ALL = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const STEP_LBLS = ['Datos personales','Datos del vehículo','Disponibilidad','Material inducción','Quiz y firma'];
+let cs = 0, done = [false,false,false,false,false];
+ 
+// Demo drivers — en producción esto vendría de una base de datos
+let drivers = [
+  {nombre:'Carlos Muñoz',rut:'15.234.567-8',email:'carlos.m@gmail.com',tel:'+56912345678',ciudad:'Valdivia',local:'L94',patente:'BBCD12',marca:'Mercedes',modelo:'Sprinter',alto:190,largo:300,ancho:165,chofer:'Carlos Muñoz',chofer_rut:'15.234.567-8',chofer_cel:'+56912345678',dias:['Lun','Mar','Mié','Jue'],estado:'completo',beetrack:true},
+  {nombre:'Ana Torres',rut:'17.890.123-4',email:'ana.t@gmail.com',tel:'+56987654321',ciudad:'Puerto Montt',local:'L99',patente:'XYZK45',marca:'Fiat',modelo:'Ducato',alto:180,largo:290,ancho:160,chofer:'Ana Torres',chofer_rut:'17.890.123-4',chofer_cel:'+56987654321',dias:['Lun','Mié','Vie'],estado:'proceso',beetrack:false},
+  {nombre:'Roberto Díaz',rut:'12.111.222-3',email:'rdiaz@hotmail.com',tel:'+56911223344',ciudad:'Santiago',local:'RM',patente:'FFGG78',marca:'VW',modelo:'Crafter',alto:200,largo:320,ancho:170,chofer:'Roberto Díaz',chofer_rut:'12.111.222-3',chofer_cel:'+56911223344',dias:['Mar','Jue','Sáb'],estado:'inicio',beetrack:false},
+];
+ 
+function sv(v) {
+  document.getElementById('v-drv').classList.toggle('on', v==='drv');
+  document.getElementById('v-dsh').classList.toggle('on', v==='dsh');
+  document.getElementById('t-drv').classList.toggle('on', v==='drv');
+  document.getElementById('t-dsh').classList.toggle('on', v==='dsh');
+  if (v==='dsh') rt();
+}
+ 
+function gs(n) {
+  document.getElementById('s'+cs).style.display='none';
+  cs = n;
+  document.getElementById('s'+n).style.display='block';
+  document.getElementById('sp').style.display='none';
+  up(); ut();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+ 
+function ns(n) {
+  // Validaciones
+  if (n===0) {
+    const nm=document.getElementById('fn').value.trim();
+    const rut=document.getElementById('fr').value.trim();
+    const tel=document.getElementById('ft').value.trim();
+    const em=document.getElementById('fe').value.trim();
+    const city=document.querySelector('.city-chip.sel');
+    if (!nm||!rut||!tel||!em||!city) {
+      document.getElementById('err0').style.display='flex';
+      return;
+    }
+    document.getElementById('err0').style.display='none';
+  }
+  if (n===1) {
+    const ch=document.querySelector('.pc')?.value.trim();
+    const pt=document.querySelector('.pp')?.value.trim();
+    const al=document.querySelector('.pa')?.value.trim();
+    const la=document.querySelector('.pla')?.value.trim();
+    const aw=document.querySelector('.pw')?.value.trim();
+    const cr=document.querySelector('.prut')?.value.trim();
+    const cc=document.querySelector('.pcel')?.value.trim();
+    if (!ch||!pt||!al||!la||!aw||!cr||!cc) {
+      document.getElementById('err1').style.display='flex';
+      return;
+    }
+    document.getElementById('err1').style.display='none';
+  }
+  if (n===2) {
+    const dias=[...document.querySelectorAll('.dia.sel')];
+    if (!dias.length) {
+      document.getElementById('err2').style.display='flex';
+      return;
+    }
+    document.getElementById('err2').style.display='none';
+  }
+  done[n]=true; ut(); gs(n+1);
+}
+ 
+function up() {
+  const pct = Math.round((cs/5)*100);
+  document.getElementById('pf').style.width = pct+'%';
+  document.getElementById('pl').textContent = 'Paso '+(cs+1)+' de 5 — '+STEP_LBLS[cs];
+}
+ 
+function ut() {
+  for(let i=0;i<5;i++){
+    const t=document.getElementById('tab'+i);
+    t.className='stab';
+    if(i===cs) t.classList.add('on');
+    else if(done[i]) t.classList.add('done');
+  }
+}
+ 
+function selCity(el) {
+  document.querySelectorAll('.city-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+ 
+function mr(key, el) {
+  el.className='res-btn done';
+  el.innerHTML='<i class="ti ti-check"></i> Listo';
+}
+ 
+function qchk(cb) {
+  document.getElementById('bfin').disabled = !cb.checked;
+}
+ 
+function fin() {
+  const nm  = document.getElementById('fn').value || 'Driver';
+  const city = document.querySelector('.city-chip.sel');
+  const cn  = city?.dataset.c || '—';
+  const cl  = city?.dataset.l || '—';
+  const ini = nm.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+  const dias = [...document.querySelectorAll('.dia.sel')].map(d=>d.dataset.d);
+ 
+  document.getElementById('pav').textContent = ini || 'DC';
+  document.getElementById('pnm').textContent = nm;
+  document.getElementById('pct').textContent = cn+' — '+cl;
+ 
+  drivers.push({
+    nombre: nm,
+    rut:    document.getElementById('fr').value,
+    email:  document.getElementById('fe').value,
+    tel:    document.getElementById('ft').value,
+    ciudad: cn, local: cl,
+    patente:(document.querySelector('.pp')?.value||'').toUpperCase(),
+    marca:   document.querySelector('.pm')?.value  || '',
+    modelo:  document.querySelector('.pmo')?.value || '',
+    alto:    document.querySelector('.pa')?.value  || '',
+    largo:   document.querySelector('.pla')?.value || '',
+    ancho:   document.querySelector('.pw')?.value  || '',
+    chofer:  document.querySelector('.pc')?.value  || nm,
+    chofer_rut: document.querySelector('.prut')?.value || '',
+    chofer_cel: document.querySelector('.pcel')?.value || '',
+    dias, estado:'completo', beetrack:false
+  });
+ 
+  for(let i=0;i<5;i++) document.getElementById('s'+i).style.display='none';
+  document.getElementById('sp').style.display='block';
+  document.getElementById('pf').style.width='100%';
+  document.getElementById('pl').textContent='¡Registro finalizado!';
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast('Registro enviado al supervisor');
+}
+ 
+function rt() {
+  const q = (document.getElementById('ds')?.value||'').toLowerCase();
+  const f = drivers.filter(d =>
+    (d.nombre||'').toLowerCase().includes(q) ||
+    (d.patente||'').toLowerCase().includes(q) ||
+    (d.ciudad||'').toLowerCase().includes(q) ||
+    (d.local||'').toLowerCase().includes(q) ||
+    (d.email||'').toLowerCase().includes(q)
+  );
+  const tb = document.getElementById('tb');
+  if (!f.length) {
+    tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2.5rem;color:var(--text-2);font-size:13px">Sin resultados</td></tr>';
+  } else {
+    tb.innerHTML = f.map(d => {
+      const dias = d.dias||[];
+      const dh = '<div class="dmini">'+DIAS_ALL.map(x=>`<div class="dd ${dias.includes(x)?'sel':''}">${x[0]}</div>`).join('')+'</div>';
+      const bc = d.estado==='completo'?'b-ok':d.estado==='proceso'?'b-par':'b-ini';
+      const bl = d.estado==='completo'?'Completo':d.estado==='proceso'?'En proceso':'Iniciado';
+      const bee = d.beetrack
+        ? '<span class="sbadge b-ok"><i class="ti ti-check"></i> Activo</span>'
+        : '<span class="sbadge b-pnd">Pendiente</span>';
+      const idx = drivers.indexOf(d);
+      return `<tr>
+        <td style="font-weight:600;white-space:nowrap">${d.nombre}</td>
+        <td style="font-family:var(--mono);font-size:11px">${d.rut||'—'}</td>
+        <td style="font-size:11px;color:var(--text-2)">${d.email||'—'}</td>
+        <td><span class="vchip">${d.patente||'—'}</span></td>
+        <td><span style="font-weight:500">${d.ciudad||'—'}</span><br><span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">${d.local||''}</span></td>
+        <td>${dh}</td>
+        <td><span class="sbadge ${bc}">${bl}</span></td>
+        <td>${bee}</td>
+        <td><button onclick="om(${idx})" style="border:1px solid var(--border-2);background:var(--card);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:12px;font-family:var(--font);color:var(--text)"><i class="ti ti-eye"></i></button></td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('mt').textContent  = drivers.length;
+  document.getElementById('mc2').textContent = drivers.filter(d=>d.estado==='completo').length;
+  document.getElementById('mpr').textContent = drivers.filter(d=>d.estado!=='completo').length;
+  document.getElementById('mb').textContent  = drivers.filter(d=>!d.beetrack).length;
+}
+ 
+function om(i) {
+  const d = drivers[i];
+  document.getElementById('mtt').textContent = d.nombre;
+  const dias = (d.dias||[]).join(', ') || '—';
+  document.getElementById('mb2').innerHTML = `
+    <div class="sect-div">Datos personales</div>
+    <div class="drow"><span class="dl">RUT</span><span class="dv" style="font-family:var(--mono)">${d.rut||'—'}</span></div>
+    <div class="drow"><span class="dl">Email</span><span class="dv">${d.email||'—'}</span></div>
+    <div class="drow"><span class="dl">Teléfono</span><span class="dv">${d.tel||'—'}</span></div>
+    <div class="drow"><span class="dl">Ciudad</span><span class="dv">${d.ciudad||'—'} <span style="font-family:var(--mono);font-size:10px;color:var(--text-3)">${d.local||''}</span></span></div>
+    <div class="drow"><span class="dl">Disponibilidad</span><span class="dv">${dias}</span></div>
+    <div class="sect-div">Vehículo</div>
+    <div class="drow"><span class="dl">Patente</span><span class="dv" style="font-family:var(--mono);font-weight:600">${d.patente||'—'}</span></div>
+    <div class="drow"><span class="dl">Vehículo</span><span class="dv">${[d.marca,d.modelo].filter(Boolean).join(' ')||'—'}</span></div>
+    <div class="drow"><span class="dl">Nombre chofer</span><span class="dv">${d.chofer||d.nombre}</span></div>
+    <div class="drow"><span class="dl">RUT chofer</span><span class="dv" style="font-family:var(--mono)">${d.chofer_rut||'—'}</span></div>
+    <div class="drow"><span class="dl">Cel chofer</span><span class="dv">${d.chofer_cel||'—'}</span></div>
+    <div class="drow"><span class="dl">Alto interior</span><span class="dv">${d.alto||'—'} cm</span></div>
+    <div class="drow"><span class="dl">Largo interior</span><span class="dv">${d.largo||'—'} cm</span></div>
+    <div class="drow"><span class="dl">Ancho interior</span><span class="dv">${d.ancho||'—'} cm</span></div>
+    <div class="bts">
+      <span class="btl"><i class="ti ti-device-mobile"></i> Cuenta Beetrack</span>
+      <div class="btog">
+        <button class="bb ${d.beetrack?'ay':''}" onclick="sbt(${i},true)">Creada</button>
+        <button class="bb ${!d.beetrack?'an':''}" onclick="sbt(${i},false)">Pendiente</button>
+      </div>
+    </div>`;
+  document.getElementById('ov').classList.add('open');
+}
+ 
+function cm()  { document.getElementById('ov').classList.remove('open'); }
+ 
+function sbt(i, v) {
+  drivers[i].beetrack = v;
+  om(i); rt();
+  toast(v ? 'Beetrack marcado como activo' : 'Marcado como pendiente');
+}
+ 
+function expCSV() {
+  const h = ['Nombre','RUT','Email','Teléfono','Ciudad','Local','Patente','Marca','Modelo',
+             'Alto cm','Largo cm','Ancho cm','Chofer','RUT Chofer','Cel Chofer',
+             'Días disponibles','Estado','Beetrack'];
+  const rows = drivers.map(d => [
+    d.nombre,d.rut,d.email,d.tel,d.ciudad,d.local,d.patente,d.marca,d.modelo,
+    d.alto,d.largo,d.ancho,d.chofer,d.chofer_rut,d.chofer_cel,
+    (d.dias||[]).join(' - '),d.estado,d.beetrack?'Sí':'No'
+  ].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [h.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'catex_drivers_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('CSV exportado — ábrelo en Google Sheets');
+}
+ 
+function toast(msg) {
+  const t = document.getElementById('tst');
+  document.getElementById('tm').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+ 
+window.onclick = e => { if(e.target===document.getElementById('ov')) cm(); };
+</script>
+</body>
+</html>
+ 
