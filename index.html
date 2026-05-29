@@ -1,1147 +1,1619 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CATEX — Portal de Ingreso de Drivers</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-  :root {
-    --green-dark:   #085041;
-    --green-mid:    #0F6E56;
-    --green-base:   #1D9E75;
-    --green-light:  #5DCAA5;
-    --green-pale:   #E1F5EE;
-    --amber-dark:   #633806;
-    --amber-mid:    #854F0B;
-    --amber-pale:   #FAEEDA;
-    --red-dark:     #791F1F;
-    --red-pale:     #FCEBEB;
-    --blue-mid:     #185FA5;
-    --blue-pale:    #E6F1FB;
-    --gray-100:     #F5F4F0;
-    --gray-200:     #E8E7E2;
-    --gray-400:     #B0AFA8;
-    --gray-600:     #5F5E5A;
-    --gray-900:     #1A1A18;
-    --text:         #1A1A18;
-    --text-2:       #5F5E5A;
-    --text-3:       #9B9A94;
-    --border:       rgba(0,0,0,0.1);
-    --border-2:     rgba(0,0,0,0.18);
-    --bg:           #F5F4F0;
-    --card:         #FFFFFF;
-    --radius:       10px;
-    --radius-lg:    14px;
-    --font:         'DM Sans', sans-serif;
-    --mono:         'DM Mono', monospace;
-  }
- 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
-  }
- 
-  /* NAV */
-  .nav {
-    background: var(--green-mid);
-    padding: 0 1.25rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 54px;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.3px;
-  }
-  .nav-pill {
-    background: rgba(255,255,255,0.2);
-    border-radius: 5px; padding: 2px 8px;
-    font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #fff;
-  }
-  .nav-tabs { display: flex; gap: 4px; }
-  .ntab {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 7px; padding: 5px 14px;
-    font-size: 12px; font-weight: 500;
-    color: rgba(255,255,255,0.75); cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    font-family: var(--font);
-    transition: background 0.15s, color 0.15s;
-  }
-  .ntab.on { background: rgba(255,255,255,0.25); color: #fff; }
-  .ntab:hover { background: rgba(255,255,255,0.2); color: #fff; }
- 
-  /* VIEWS */
-  .view { display: none; }
-  .view.on { display: block; }
- 
-  /* HERO */
-  .hero {
-    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
-    padding: 1.75rem 1.25rem 1.5rem; color: #fff;
-  }
-  .hero h1 { font-size: 20px; font-weight: 600; }
-  .hero p { font-size: 13px; opacity: 0.8; margin-top: 3px; }
-  .prog-wrap {
-    background: rgba(255,255,255,0.2);
-    border-radius: 99px; height: 4px; margin-top: 1.1rem; overflow: hidden;
-  }
-  .prog-fill {
-    height: 100%; background: #fff; border-radius: 99px;
-    transition: width 0.45s cubic-bezier(.4,0,.2,1);
-  }
-  .prog-lbl { font-size: 11px; opacity: 0.7; margin-top: 6px; }
- 
-  /* STEP TABS */
-  .stabs {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 0 1.25rem; display: flex; overflow-x: auto; gap: 0;
-    -webkit-overflow-scrolling: touch;
-  }
-  .stabs::-webkit-scrollbar { display: none; }
-  .stab {
-    padding: 11px 14px; font-size: 12px; font-weight: 500;
-    color: var(--text-3); border-bottom: 2px solid transparent;
-    cursor: pointer; white-space: nowrap;
-    display: flex; align-items: center; gap: 5px;
-    background: none; border-top: none; border-left: none; border-right: none;
-    font-family: var(--font);
-    transition: color 0.15s;
-  }
-  .stab.on { color: var(--green-mid); border-bottom-color: var(--green-mid); }
-  .stab.done { color: var(--green-base); }
-  .stab .ck {
-    width: 14px; height: 14px; background: var(--green-base);
-    border-radius: 50%; display: inline-flex; align-items: center;
-    justify-content: center; font-size: 8px; color: #fff;
-  }
- 
-  /* CONTENT */
-  .sc {
-    padding: 1.5rem 1.25rem;
-    max-width: 580px; margin: 0 auto;
-  }
- 
-  .stitle { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-  .ssub { font-size: 12px; color: var(--text-2); margin-bottom: 1.4rem; }
- 
-  /* FORMS */
-  .fg { margin-bottom: 1.1rem; }
-  .fl {
-    font-size: 12px; color: var(--text-2); font-weight: 500;
-    margin-bottom: 5px; display: block;
-  }
-  .fl .req { color: #E24B4A; margin-left: 1px; }
-  input[type=text], input[type=email], input[type=tel] {
-    width: 100%;
-    border: 1px solid var(--border-2);
-    border-radius: var(--radius);
-    padding: 9px 12px;
-    font-size: 13px;
-    background: var(--card);
-    color: var(--text);
-    font-family: var(--font);
-    transition: border-color 0.15s, box-shadow 0.15s;
-    -webkit-appearance: none;
-  }
-  input:focus {
-    outline: none;
-    border-color: var(--green-base);
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
-  }
-  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
-  .warn-box {
-    background: var(--amber-pale); border-radius: var(--radius);
-    padding: 9px 11px; margin-top: 8px;
-    font-size: 12px; color: var(--amber-dark);
-    display: flex; align-items: flex-start; gap: 7px;
-    border: 1px solid rgba(186,117,23,0.2);
-  }
-  .warn-box i { flex-shrink: 0; margin-top: 1px; font-size: 15px; }
-  .err-box {
-    background: var(--red-pale); border-radius: var(--radius);
-    padding: 9px 11px; margin-bottom: 1rem;
-    font-size: 12px; color: var(--red-dark);
-    display: flex; align-items: center; gap: 7px;
-    border: 1px solid rgba(162,45,45,0.2);
-    display: none;
-  }
- 
-  /* CIUDADES */
-  .city-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr));
-    gap: 7px; margin-top: 7px;
-  }
-  .city-chip {
-    border: 1px solid var(--border-2); background: var(--card);
-    border-radius: var(--radius); padding: 8px 10px;
-    font-size: 12px; cursor: pointer; color: var(--text-2);
-    text-align: left; display: flex; align-items: center;
-    justify-content: space-between;
-    font-family: var(--font);
-    transition: all 0.15s;
-  }
-  .city-chip:hover { border-color: var(--green-light); background: var(--green-pale); color: var(--green-dark); }
-  .city-chip.sel { background: var(--green-pale); border-color: var(--green-base); color: var(--green-dark); font-weight: 500; }
-  .city-code { font-size: 10px; font-family: var(--mono); opacity: 0.6; }
- 
-  /* DIAS */
-  .dias-g { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-top: 7px; }
-  .dia {
-    border: 1px solid var(--border-2); background: var(--card);
-    border-radius: var(--radius); padding: 9px 2px;
-    font-size: 11px; font-weight: 500; text-align: center;
-    cursor: pointer; color: var(--text-2);
-    font-family: var(--font);
-    transition: all 0.15s;
-  }
-  .dia:hover { border-color: var(--green-light); background: var(--green-pale); }
-  .dia.sel { background: var(--green-pale); border-color: var(--green-base); color: var(--green-dark); font-weight: 600; }
- 
-  /* PATENTE BLOCK */
-  .pat-block {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 1rem;
-    margin-bottom: 10px; background: var(--card);
-  }
-  .pat-hdr {
-    font-size: 12px; font-weight: 600; color: var(--text-2);
-    margin-bottom: 12px; display: flex; align-items: center; gap: 5px;
-  }
- 
-  /* RECURSOS */
-  .res-card {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg); background: var(--card);
-    padding: 1rem 1.1rem; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .res-icon {
-    width: 40px; height: 40px; border-radius: var(--radius);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 19px; flex-shrink: 0;
-  }
-  .ri-g { background: var(--green-pale); color: var(--green-mid); }
-  .ri-a { background: var(--amber-pale); color: var(--amber-mid); }
-  .ri-b { background: var(--blue-pale); color: var(--blue-mid); }
-  .ri-r { background: var(--red-pale); color: var(--red-dark); }
-  .res-info { flex: 1; }
-  .res-info h4 { font-size: 13px; font-weight: 600; color: var(--text); }
-  .res-info p { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-  .res-btn {
-    border: 1px solid var(--border-2); background: transparent;
-    border-radius: var(--radius); padding: 7px 13px;
-    font-size: 12px; font-weight: 500; cursor: pointer;
-    color: var(--text); white-space: nowrap;
-    display: flex; align-items: center; gap: 4px;
-    text-decoration: none; font-family: var(--font);
-    transition: background 0.15s;
-  }
-  .res-btn:hover { background: var(--gray-100); }
-  .res-btn.done { background: var(--green-pale); color: var(--green-dark); border-color: var(--green-light); }
- 
-  /* ANDROID NOTICE */
-  .android-notice {
-    background: var(--red-pale); border: 1px solid rgba(162,45,45,0.2);
-    border-radius: var(--radius); padding: 9px 11px; margin-bottom: 12px;
-    font-size: 12px; color: var(--red-dark);
-    display: flex; align-items: center; gap: 7px;
-  }
- 
-  /* QUIZ BANNER */
-  .quiz-banner {
-    background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
-    border-radius: var(--radius-lg); padding: 1.1rem;
-    color: #fff; margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .quiz-banner i { font-size: 28px; flex-shrink: 0; }
-  .quiz-banner h3 { font-size: 14px; font-weight: 600; }
-  .quiz-banner p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
- 
-  /* CHECKBOX */
-  .check-row {
-    border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 10px 13px;
-    margin-top: 10px; display: flex; align-items: center; gap: 10px;
-    background: var(--card);
-  }
-  .check-row label { font-size: 13px; color: var(--text-2); cursor: pointer; flex: 1; }
-  .check-row input[type=checkbox] {
-    width: 17px; height: 17px; accent-color: var(--green-mid);
-    cursor: pointer; flex-shrink: 0;
-  }
- 
-  /* BOTONES */
-  .btn-p {
-    background: var(--green-mid); color: #fff;
-    border: none; border-radius: var(--radius); padding: 12px 20px;
-    font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    margin-top: 1.4rem; font-family: var(--font);
-    transition: background 0.15s, transform 0.1s;
-  }
-  .btn-p:hover { background: var(--green-dark); }
-  .btn-p:active { transform: scale(0.98); }
-  .btn-p:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
-  .btn-s {
-    background: transparent; border: 1px solid var(--border-2);
-    border-radius: var(--radius); padding: 11px 20px;
-    font-size: 13px; cursor: pointer; color: var(--text);
-    width: 100%; display: flex; align-items: center;
-    justify-content: center; gap: 7px; margin-top: 8px;
-    font-family: var(--font); transition: background 0.15s;
-  }
-  .btn-s:hover { background: var(--gray-100); }
- 
-  /* PERFIL FINAL */
-  .success-wrap { text-align: center; padding: .75rem 0 1.5rem; }
-  .success-icon {
-    width: 56px; height: 56px; background: var(--green-pale);
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; margin: 0 auto 12px;
-    font-size: 26px; color: var(--green-mid);
-  }
-  .perf-card {
-    border: 1px solid var(--border); border-radius: var(--radius-lg);
-    background: var(--card); padding: 1.1rem; margin-bottom: 1rem;
-  }
-  .perf-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
-  .avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: var(--green-pale); display: flex; align-items: center;
-    justify-content: center; font-size: 14px; font-weight: 600;
-    color: var(--green-dark); flex-shrink: 0;
-  }
-  .badge-ok {
-    display: inline-flex; align-items: center; gap: 3px;
-    padding: 3px 9px; border-radius: 99px;
-    font-size: 11px; font-weight: 600;
-    background: var(--green-pale); color: var(--green-dark);
-  }
-  .cl { list-style: none; }
-  .cl li {
-    display: flex; align-items: center; gap: 7px;
-    padding: 7px 0; border-bottom: 1px solid var(--border);
-    font-size: 12px; color: var(--text-2);
-  }
-  .cl li:last-child { border: none; }
-  .cl li.ok { color: var(--text); }
-  .cl li.ok i { color: var(--green-base); }
-  .cl li.pend i { color: #BA7517; }
- 
-  /* DASHBOARD */
-  .dw { padding: 1.25rem; max-width: 1000px; margin: 0 auto; }
-  .metrics {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-    gap: 10px; margin-bottom: 1.4rem;
-  }
-  .mc {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 1rem;
-  }
-  .mc-lbl { font-size: 11px; color: var(--text-2); font-weight: 500; margin-bottom: 4px; }
-  .mc-val { font-size: 26px; font-weight: 600; color: var(--text); }
-  .mc-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-  .dtbar {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1rem; gap: 8px; flex-wrap: wrap;
-  }
-  .dtbar h2 { font-size: 15px; font-weight: 600; }
-  .dsrch {
-    flex: 1; min-width: 140px; max-width: 260px;
-    border: 1px solid var(--border-2); border-radius: var(--radius);
-    padding: 7px 11px; font-size: 12px;
-    background: var(--card); color: var(--text); font-family: var(--font);
-  }
-  .dsrch:focus { outline: none; border-color: var(--green-base); }
-  .exp-btn {
-    border: 1px solid var(--border-2); background: var(--card);
-    border-radius: var(--radius); padding: 7px 13px;
-    font-size: 12px; cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    color: var(--text); font-family: var(--font);
-    font-weight: 500; transition: background 0.15s;
-  }
-  .exp-btn:hover { background: var(--gray-100); }
-  .tbl-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-  .dt {
-    width: 100%; border-collapse: collapse;
-    font-size: 12px; background: var(--card);
-  }
-  .dt th {
-    text-align: left; padding: 9px 13px; font-size: 11px;
-    font-weight: 600; color: var(--text-2);
-    background: var(--gray-100); border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .dt td {
-    padding: 10px 13px; border-bottom: 1px solid var(--border);
-    color: var(--text); vertical-align: middle;
-  }
-  .dt tr:last-child td { border: none; }
-  .dt tbody tr:hover td { background: var(--gray-100); }
-  .sbadge {
-    display: inline-flex; align-items: center; gap: 3px;
-    padding: 2px 8px; border-radius: 99px;
-    font-size: 10px; font-weight: 600;
-  }
-  .b-ok  { background: var(--green-pale); color: var(--green-dark); }
-  .b-par { background: var(--amber-pale); color: var(--amber-dark); }
-  .b-ini { background: var(--gray-200);   color: var(--gray-600); }
-  .b-pnd { background: var(--red-pale);   color: var(--red-dark); }
-  .vchip {
-    background: var(--gray-100); border: 1px solid var(--border);
-    border-radius: 4px; padding: 2px 7px;
-    font-size: 10px; font-weight: 600; font-family: var(--mono);
-    letter-spacing: 0.8px; display: inline-block;
-  }
-  .dmini { display: flex; gap: 2px; }
-  .dd {
-    width: 17px; height: 17px; border-radius: 3px;
-    background: var(--gray-200); color: var(--text-3);
-    font-size: 8px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .dd.sel { background: var(--green-pale); color: var(--green-dark); }
- 
-  /* MODAL */
-  .ov {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.4);
-    align-items: center; justify-content: center; padding: 1rem;
-  }
-  .ov.open { display: flex; }
-  .mbox {
-    background: var(--card); border-radius: var(--radius-lg);
-    border: 1px solid var(--border); padding: 1.4rem;
-    width: 100%; max-width: 460px;
-    max-height: 88vh; overflow-y: auto;
-    animation: mIn 0.2s ease;
-  }
-  @keyframes mIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
-  .mhdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
-  .mhdr h3 { font-size: 16px; font-weight: 600; }
-  .mcl { background: none; border: none; cursor: pointer; color: var(--text-2); font-size: 18px; display: flex; align-items: center; }
-  .sect-div { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; margin: 1rem 0 .4rem; }
-  .drow { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 10px; }
-  .drow:last-child { border: none; }
-  .dl { color: var(--text-2); flex-shrink: 0; }
-  .dv { color: var(--text); text-align: right; }
-  .bts { display: flex; align-items: center; justify-content: space-between; background: var(--gray-100); border-radius: var(--radius); padding: 9px 12px; margin-top: 1rem; gap: 8px; border: 1px solid var(--border); }
-  .btl { font-size: 12px; font-weight: 600; }
-  .btog { display: flex; gap: 5px; }
-  .bb { padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border-2); background: var(--card); color: var(--text-2); font-family: var(--font); transition: all 0.15s; }
-  .bb:hover { background: var(--gray-100); }
-  .bb.ay { background: var(--green-pale); color: var(--green-dark); border-color: var(--green-light); }
-  .bb.an { background: var(--red-pale); color: var(--red-dark); border-color: #F0997B; }
- 
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-    background: var(--green-dark); color: #fff;
-    padding: 10px 18px; border-radius: var(--radius);
-    font-size: 12px; font-weight: 500; z-index: 999;
-    display: flex; align-items: center; gap: 7px;
-    opacity: 0; transition: opacity 0.25s; pointer-events: none;
-    white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-  }
-  .toast.show { opacity: 1; }
- 
-  /* LOGIN DASHBOARD */
-  .login-overlay {
-    position: fixed; inset: 0; z-index: 300;
-    background: rgba(8,80,65,0.97);
-    display: flex; align-items: center; justify-content: center;
-    padding: 1.5rem;
-  }
-  .login-box {
-    background: var(--card); border-radius: var(--radius-lg);
-    padding: 2rem 1.75rem; width: 100%; max-width: 340px;
-    text-align: center;
-    animation: mIn 0.25s ease;
-  }
-  .login-icon {
-    width: 52px; height: 52px; background: var(--green-pale);
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; margin: 0 auto 1rem;
-    font-size: 22px; color: var(--green-mid);
-  }
-  .login-box h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-  .login-box p { font-size: 12px; color: var(--text-2); margin-bottom: 1.25rem; }
-  .login-input {
-    width: 100%; border: 1px solid var(--border-2);
-    border-radius: var(--radius); padding: 10px 13px;
-    font-size: 14px; font-family: var(--font);
-    background: var(--bg); color: var(--text);
-    text-align: center; letter-spacing: 3px;
-    margin-bottom: 10px;
-  }
-  .login-input:focus { outline: none; border-color: var(--green-base); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
-  .login-err { font-size: 12px; color: #E24B4A; margin-bottom: 8px; display: none; }
-  .login-btn {
-    width: 100%; background: var(--green-mid); color: #fff;
-    border: none; border-radius: var(--radius); padding: 11px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
-    font-family: var(--font);
-  }
-  .login-btn:hover { background: var(--green-dark); }
- 
-  /* MOBILE */
-  @media (max-width: 480px) {
-    .frow { grid-template-columns: 1fr; }
-    .city-grid { grid-template-columns: repeat(2,1fr); }
-    .dias-g { gap: 4px; }
-    .dia { padding: 8px 1px; font-size: 10px; }
-    .metrics { grid-template-columns: repeat(2,1fr); }
-    .ntab span { display: none; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CATEX — Portal de Ingreso de Drivers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    /* =====================================================
+       VARIABLES & RESET
+    ===================================================== */
+    :root {
+      --c-primary: #0F6E56;
+      --c-base:    #1D9E75;
+      --c-light:   #E1F5EE;
+      --c-lighter: #F0FAF6;
+      --c-text:    #1A2E27;
+      --c-muted:   #6B8C82;
+      --c-border:  #C8E6DC;
+      --c-white:   #FFFFFF;
+      --c-error:   #D93025;
+      --c-warning: #F59E0B;
+      --c-dark:    #0A2018;
+      --radius:    12px;
+      --radius-sm: 8px;
+      --shadow:    0 2px 16px rgba(15,110,86,.10);
+      --shadow-lg: 0 8px 40px rgba(15,110,86,.16);
+      --font:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+      --transition: .18s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--c-lighter);
+      color: var(--c-text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+    .header {
+      background: var(--c-primary);
+      padding: 0 20px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(10,32,24,.3);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+    }
+
+    .header-logo {
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,.18);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .header-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    .header-sub {
+      font-size: .72rem;
+      opacity: .7;
+      margin-top: 1px;
+    }
+
+    .btn-dashboard {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.12);
+      color: white;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: var(--font);
+    }
+
+    .btn-dashboard:hover { background: rgba(255,255,255,.22); }
+
+    /* =====================================================
+       MAIN LAYOUT
+    ===================================================== */
+    .main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+
+    /* =====================================================
+       PROGRESS BAR
+    ===================================================== */
+    .progress-container {
+      background: var(--c-white);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-label {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--c-primary);
+    }
+
+    .progress-count {
+      font-size: .78rem;
+      color: var(--c-muted);
+    }
+
+    .progress-track {
+      height: 5px;
+      background: var(--c-light);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-primary), var(--c-base));
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .step-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .step-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--c-muted);
+      background: var(--c-white);
+      transition: all var(--transition);
+    }
+
+    .step-pill.done .step-dot  { background: var(--c-primary); border-color: var(--c-primary); color: white; }
+    .step-pill.active .step-dot{ background: var(--c-base); border-color: var(--c-base); color: white; box-shadow: 0 0 0 3px rgba(29,158,117,.2); }
+
+    .step-name {
+      font-size: .65rem;
+      color: var(--c-muted);
+      text-align: center;
+      max-width: 54px;
+      line-height: 1.2;
+    }
+
+    .step-pill.active .step-name { color: var(--c-primary); font-weight: 600; }
+    .step-pill.done .step-name   { color: var(--c-base); }
+
+    /* =====================================================
+       CARD
+    ===================================================== */
+    .card {
+      background: var(--c-white);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+      animation: fadeUp .22s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--c-primary);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: .83rem;
+      color: var(--c-muted);
+      margin-bottom: 18px;
+    }
+
+    /* =====================================================
+       FORM ELEMENTS
+    ===================================================== */
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 5px;
+    }
+
+    .field .req { color: var(--c-error); margin-left: 2px; }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .9rem;
+      color: var(--c-text);
+      background: var(--c-white);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--c-base);
+      box-shadow: 0 0 0 3px rgba(29,158,117,.12);
+    }
+
+    .field input.err { border-color: var(--c-error); }
+
+    .ferr {
+      font-size: .73rem;
+      color: var(--c-error);
+      margin-top: 3px;
+      display: none;
+    }
+
+    .field input.mono {
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .frow3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    @media (max-width: 480px) {
+      .frow  { grid-template-columns: 1fr; }
+      .frow3 { grid-template-columns: 1fr; }
+    }
+
+    /* =====================================================
+       CITY GRID
+    ===================================================== */
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 7px;
+      margin-top: 5px;
+    }
+
+    .city-btn {
+      padding: 9px 8px;
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      background: var(--c-white);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      transition: all var(--transition);
+      font-family: var(--font);
+    }
+
+    .city-btn:hover { border-color: var(--c-base); background: var(--c-lighter); }
+    .city-btn.sel   { border-color: var(--c-primary); background: var(--c-light); }
+
+    .city-name { font-size: .82rem; font-weight: 500; color: var(--c-text); }
+    .city-code { font-size: .7rem; font-family: var(--mono); color: var(--c-muted); }
+    .city-btn.sel .city-name { color: var(--c-primary); font-weight: 600; }
+    .city-btn.sel .city-code { color: var(--c-base); }
+
+    /* =====================================================
+       DAYS GRID
+    ===================================================== */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .day-btn {
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      background: var(--c-white);
+      cursor: pointer;
+      text-align: center;
+      font-family: var(--font);
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--c-muted);
+      padding: 10px 4px;
+      transition: all var(--transition);
+    }
+
+    .day-btn:hover { border-color: var(--c-base); background: var(--c-lighter); }
+    .day-btn.sel   { background: var(--c-primary); border-color: var(--c-primary); color: white; }
+
+    /* =====================================================
+       ALERTS
+    ===================================================== */
+    .alert {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .83rem;
+      margin: 12px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      line-height: 1.5;
+    }
+
+    .alert i { font-size: 1.05rem; flex-shrink: 0; margin-top: 1px; }
+
+    .alert-warn  { background: #FFF8EC; border: 1px solid #F59E0B; color: #7C5512; }
+    .alert-warn i { color: #F59E0B; }
+    .alert-error { background: #FFF0EF; border: 1px solid #D93025; color: #7C1414; }
+    .alert-error i { color: #D93025; }
+    .alert-info  { background: var(--c-light); border: 1px solid var(--c-border); color: var(--c-primary); }
+    .alert-info i { color: var(--c-base); }
+
+    /* =====================================================
+       RESOURCE CARDS
+    ===================================================== */
+    .resource-card {
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: border-color var(--transition);
+    }
+
+    .resource-card:hover { border-color: var(--c-base); }
+
+    .rc-info { display: flex; align-items: center; gap: 11px; flex: 1; }
+
+    .rc-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: var(--c-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-primary);
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .rc-title { font-weight: 600; font-size: .88rem; }
+    .rc-desc  { font-size: .75rem; color: var(--c-muted); margin-top: 1px; }
+
+    .btn-rc {
+      padding: 7px 13px;
+      background: var(--c-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background var(--transition);
+    }
+
+    .btn-rc:hover { background: var(--c-dark); }
+
+    /* =====================================================
+       CHECKBOX
+    ===================================================== */
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 13px 14px;
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      margin-top: 14px;
+      transition: border-color var(--transition), background var(--transition);
+    }
+
+    .check-label:hover { border-color: var(--c-base); background: var(--c-lighter); }
+    .check-label input { width: 17px; height: 17px; accent-color: var(--c-primary); cursor: pointer; flex-shrink: 0; }
+    .check-label span  { font-size: .875rem; font-weight: 500; line-height: 1.4; }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 22px;
+      background: var(--c-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-primary:hover    { background: var(--c-dark); transform: translateY(-1px); }
+    .btn-primary:disabled { background: var(--c-border); color: var(--c-muted); cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 18px;
+      background: var(--c-white);
+      color: var(--c-primary);
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-secondary:hover { border-color: var(--c-base); background: var(--c-light); }
+
+    /* =====================================================
+       PROFILE FINAL
+    ===================================================== */
+    .profile-card { text-align: center; padding: 28px 20px; }
+
+    .profile-avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c-primary), var(--c-base));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 14px;
+    }
+
+    .profile-name  { font-size: 1.2rem; font-weight: 700; margin-bottom: 3px; }
+    .profile-city  { color: var(--c-muted); font-size: .88rem; margin-bottom: 10px; }
+
+    .badge-ok {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 13px;
+      background: #DCFCE7;
+      color: #166534;
+      border-radius: 99px;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .checklist {
+      text-align: left;
+      background: var(--c-lighter);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+
+    .ci {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 5px 0;
+      font-size: .855rem;
+    }
+
+    .ci i { color: var(--c-primary); font-size: .95rem; flex-shrink: 0; }
+    .ci.pend i { color: var(--c-warning); }
+    .ci.pend span { color: var(--c-muted); }
+
+    .btn-nuevo {
+      margin-top: 20px;
+      padding: 11px 26px;
+      background: var(--c-light);
+      color: var(--c-primary);
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-nuevo:hover { background: var(--c-primary); color: white; }
+
+    /* =====================================================
+       LOADING
+    ===================================================== */
+    .loading-ov {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,.88);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .loading-ov.on { display: flex; }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid var(--c-light);
+      border-top-color: var(--c-primary);
+      border-radius: 50%;
+      animation: spin .65s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-txt { font-size: .92rem; font-weight: 600; color: var(--c-primary); }
+
+    /* =====================================================
+       OVERLAY BASE
+    ===================================================== */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,32,24,.62);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .overlay.on { display: flex; }
+
+    .modal {
+      background: var(--c-white);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeUp .2s ease;
+    }
+
+    .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--c-primary); margin-bottom: 3px; }
+    .modal-desc  { font-size: .8rem; color: var(--c-muted); margin-bottom: 18px; }
+
+    /* =====================================================
+       DASHBOARD
+    ===================================================== */
+    #dashView {
+      display: none;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+      animation: fadeUp .22s ease;
+    }
+
+    #dashView.on { display: block; }
+
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .dash-title { font-size: 1.3rem; font-weight: 700; color: var(--c-primary); }
+    .dash-sub   { font-size: .83rem; color: var(--c-muted); margin-top: 2px; }
+    .dash-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-export {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 15px;
+      background: var(--c-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .btn-export:hover { background: var(--c-dark); }
+
+    .btn-exit {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 15px;
+      background: var(--c-white);
+      color: var(--c-muted);
+      border: 1.5px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-exit:hover { border-color: var(--c-error); color: var(--c-error); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 680px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+
+    .metric-card {
+      background: var(--c-white);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-lbl { font-size: .73rem; color: var(--c-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+    .metric-val { font-size: 1.9rem; font-weight: 700; color: var(--c-primary); line-height: 1; }
+    .metric-ico { font-size: 1.3rem; color: var(--c-base); margin-bottom: 5px; }
+
+    .search-bar {
+      background: var(--c-white);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1.5px solid var(--c-border);
+      margin-bottom: 12px;
+    }
+
+    .search-bar i { color: var(--c-muted); }
+    .search-bar input {
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .88rem;
+      flex: 1;
+      background: transparent;
+      color: var(--c-text);
+    }
+
+    .table-wrap {
+      background: var(--c-white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .table-scroll { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+
+    thead tr { background: var(--c-primary); color: white; }
+    thead th { padding: 10px 12px; text-align: left; font-weight: 600; font-size: .78rem; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--c-border); transition: background var(--transition); }
+    tbody tr:hover { background: var(--c-lighter); }
+    tbody td { padding: 10px 12px; white-space: nowrap; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: .73rem;
+      font-weight: 600;
+    }
+
+    .b-green  { background: #DCFCE7; color: #166534; }
+    .b-yellow { background: #FEF9C3; color: #713F12; }
+    .b-gray   { background: #F3F4F6; color: #374151; }
+
+    .btn-ver {
+      padding: 4px 11px;
+      background: var(--c-light);
+      color: var(--c-primary);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-ver:hover { background: var(--c-primary); color: white; }
+
+    .empty-st { padding: 44px 24px; text-align: center; color: var(--c-muted); }
+    .empty-st i { font-size: 2.2rem; margin-bottom: 6px; display: block; }
+
+    /* Driver Modal */
+    .driver-modal { max-width: 520px; max-height: 88vh; overflow-y: auto; }
+
+    .dm-header { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+
+    .dm-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c-primary), var(--c-base));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .dl { display: grid; grid-template-columns: 130px 1fr; gap: 5px 10px; font-size: .83rem; }
+    .dl dt { font-weight: 600; color: var(--c-muted); }
+    .dl dd { color: var(--c-text); word-break: break-word; }
+    .dl-sec {
+      grid-column: 1/-1;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--c-primary);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding-top: 10px;
+      border-top: 1px solid var(--c-border);
+      margin-top: 2px;
+    }
+
+    .bee-toggle {
+      grid-column: 1/-1;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 11px;
+      background: var(--c-lighter);
+      border-radius: var(--radius-sm);
+      margin-top: 4px;
+    }
+
+    .toggle-sw { position: relative; width: 38px; height: 20px; flex-shrink: 0; }
+    .toggle-sw input { opacity: 0; width: 0; height: 0; }
+    .toggle-sl {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      border-radius: 99px;
+      background: var(--c-border);
+      transition: background var(--transition);
+    }
+    .toggle-sl::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: white;
+      transition: transform var(--transition);
+    }
+    .toggle-sw input:checked + .toggle-sl { background: var(--c-primary); }
+    .toggle-sw input:checked + .toggle-sl::before { transform: translateX(18px); }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+    @media (max-width: 580px) {
+      .main { padding: 14px 10px 48px; }
+      .card { padding: 18px 14px; }
+      .progress-container { padding: 14px; }
+      .city-grid { grid-template-columns: repeat(3, 1fr); }
+      .step-name { display: none; }
+      .header-sub { display: none; }
+    }
+  </style>
 </head>
 <body>
- 
-<nav class="nav">
-  <div class="nav-logo">
-    <span class="nav-pill">CATEX</span>
-    Portal de Ingreso
-  </div>
-  <div class="nav-tabs">
-    <button class="ntab on" id="t-drv" onclick="sv('drv')">
-      <i class="ti ti-truck"></i> <span>Driver</span>
-    </button>
-    <button class="ntab" id="t-dsh" onclick="sv('dsh')">
-      <i class="ti ti-layout-dashboard"></i> <span>Dashboard</span>
-    </button>
-  </div>
-</nav>
- 
-<!-- ═══════════════ DRIVER VIEW ═══════════════ -->
-<div class="view on" id="v-drv">
-  <div class="hero">
-    <h1>Bienvenido a CATEX</h1>
-    <p>Completa todos los pasos para comenzar a operar</p>
-    <div class="prog-wrap"><div class="prog-fill" id="pf" style="width:0%"></div></div>
-    <div class="prog-lbl" id="pl">Paso 1 de 5 — Datos personales</div>
-  </div>
- 
-  <div class="stabs">
-    <button class="stab on" id="tab0" onclick="gs(0)"><i class="ti ti-user"></i> Datos</button>
-    <button class="stab"    id="tab1" onclick="gs(1)"><i class="ti ti-car"></i> Vehículo</button>
-    <button class="stab"    id="tab2" onclick="gs(2)"><i class="ti ti-calendar"></i> Días</button>
-    <button class="stab"    id="tab3" onclick="gs(3)"><i class="ti ti-book"></i> Inducción</button>
-    <button class="stab"    id="tab4" onclick="gs(4)"><i class="ti ti-certificate"></i> Quiz</button>
-  </div>
- 
-  <!-- STEP 0: Datos personales -->
-  <div class="sc" id="s0">
-    <p class="stitle">Datos personales</p>
-    <p class="ssub">Esta información se usará para crear tu cuenta en Beetrack</p>
-    <div id="err0" class="err-box"><i class="ti ti-alert-circle"></i> Completa todos los campos obligatorios</div>
- 
-    <div class="fg">
-      <label class="fl">Nombre completo <span class="req">*</span></label>
-      <input type="text" id="fn" placeholder="Ej: Juan Andrés Pérez Soto" autocomplete="name">
-    </div>
-    <div class="frow">
-      <div class="fg">
-        <label class="fl">RUT <span class="req">*</span></label>
-        <input type="text" id="fr" placeholder="12.345.678-9">
-      </div>
-      <div class="fg">
-        <label class="fl">Celular <span class="req">*</span></label>
-        <input type="tel" id="ft" placeholder="+56 9 1234 5678" autocomplete="tel">
-      </div>
-    </div>
-    <div class="fg">
-      <label class="fl">Correo electrónico <span class="req">*</span></label>
-      <input type="email" id="fe" placeholder="correo@ejemplo.com" autocomplete="email">
-      <p class="hint">Se usará para crear tu usuario en Beetrack</p>
-    </div>
-    <div class="fg">
-      <label class="fl">Sucursal / Ciudad donde operas <span class="req">*</span></label>
-      <div class="city-grid">
-        <button class="city-chip" onclick="selCity(this)" data-c="Viña del Mar"  data-l="L58">Viña del Mar   <span class="city-code">L58</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Rancagua"      data-l="L35">Rancagua       <span class="city-code">L35</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Iquique"       data-l="L679">Iquique        <span class="city-code">L679</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Chillán"       data-l="L6010">Chillán       <span class="city-code">L6010</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Temuco"        data-l="L6004">Temuco        <span class="city-code">L6004</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Antofagasta"   data-l="L6003">Antofagasta   <span class="city-code">L6003</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Concón"        data-l="L747">Concón         <span class="city-code">L747</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Puerto Montt"  data-l="L99">Puerto Montt   <span class="city-code">L99</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Valdivia"      data-l="L94">Valdivia       <span class="city-code">L94</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Calama"        data-l="L33">Calama         <span class="city-code">L33</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Santiago"      data-l="RM">Santiago        <span class="city-code">RM</span></button>
-        <button class="city-chip" onclick="selCity(this)" data-c="Concepción"    data-l="L89">Concepción    <span class="city-code">L89</span></button>
-      </div>
-    </div>
-    <button class="btn-p" onclick="ns(0)">Continuar <i class="ti ti-arrow-right"></i></button>
-  </div>
- 
-  <!-- STEP 1: Vehículo -->
-  <div class="sc" id="s1" style="display:none">
-    <p class="stitle">Datos del vehículo</p>
-    <p class="ssub">Un vehículo por chofer. Si eres dueño con múltiples vehículos, cada chofer hace su propio registro.</p>
-    <div id="err1" class="err-box"><i class="ti ti-alert-circle"></i> Completa todos los campos obligatorios del vehículo</div>
-    <div id="pats">
-      <div class="pat-block" id="p0">
-        <div class="pat-hdr"><i class="ti ti-license"></i> Datos del chofer y vehículo</div>
-        <div class="fg">
-          <label class="fl">Nombre del chofer <span class="req">*</span></label>
-          <input type="text" class="pc" placeholder="Nombre completo del chofer">
-        </div>
-        <div class="frow">
-          <div class="fg">
-            <label class="fl">RUT del chofer <span class="req">*</span></label>
-            <input type="text" class="prut" placeholder="12.345.678-9">
-          </div>
-          <div class="fg">
-            <label class="fl">Celular del chofer <span class="req">*</span></label>
-            <input type="tel" class="pcel" placeholder="+56 9 XXXX XXXX">
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Patente <span class="req">*</span></label>
-          <input type="text" class="pp" placeholder="ABCD12" style="font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase">
-        </div>
-        <div class="frow">
-          <div class="fg">
-            <label class="fl">Marca</label>
-            <input type="text" class="pm" placeholder="Ej: Mercedes">
-          </div>
-          <div class="fg">
-            <label class="fl">Modelo</label>
-            <input type="text" class="pmo" placeholder="Ej: Sprinter">
-          </div>
-        </div>
-        <div class="warn-box">
-          <i class="ti ti-alert-triangle"></i>
-          <span><strong>Dimensiones INTERIORES de la carrocería.</strong> No copies las medidas de internet — son las del vehículo completo. Mide el espacio de carga por dentro.</span>
-        </div>
-        <div class="frow" style="margin-top:12px">
-          <div class="fg">
-            <label class="fl">Alto interior (cm) <span class="req">*</span></label>
-            <input type="text" class="pa" placeholder="Ej: 180">
-          </div>
-          <div class="fg">
-            <label class="fl">Largo interior (cm) <span class="req">*</span></label>
-            <input type="text" class="pla" placeholder="Ej: 300">
-          </div>
-        </div>
-        <div class="fg" style="max-width:calc(50% - 5px)">
-          <label class="fl">Ancho interior (cm) <span class="req">*</span></label>
-          <input type="text" class="pw" placeholder="Ej: 165">
-        </div>
-      </div>
-    </div>
-    <button class="btn-p" onclick="ns(1)" style="margin-top:.5rem">Continuar <i class="ti ti-arrow-right"></i></button>
-    <button class="btn-s" onclick="gs(0)"><i class="ti ti-arrow-left"></i> Volver</button>
-  </div>
- 
-  <!-- STEP 2: Disponibilidad -->
-  <div class="sc" id="s2" style="display:none">
-    <p class="stitle">Disponibilidad semanal</p>
-    <p class="ssub">Selecciona los días en que normalmente puedes prestar servicio</p>
-    <div id="err2" class="err-box"><i class="ti ti-alert-circle"></i> Selecciona al menos un día disponible</div>
-    <div class="fg">
-      <label class="fl">Días disponibles <span class="req">*</span></label>
-      <div class="dias-g">
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Lun">Lun</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Mar">Mar</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Mié">Mié</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Jue">Jue</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Vie">Vie</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Sáb">Sáb</button>
-        <button class="dia" onclick="this.classList.toggle('sel')" data-d="Dom">Dom</button>
-      </div>
-    </div>
-    <button class="btn-p" onclick="ns(2)">Continuar <i class="ti ti-arrow-right"></i></button>
-    <button class="btn-s" onclick="gs(1)"><i class="ti ti-arrow-left"></i> Volver</button>
-  </div>
- 
-  <!-- STEP 3: Inducción -->
-  <div class="sc" id="s3" style="display:none">
-    <p class="stitle">Material de inducción</p>
-    <p class="ssub">Revisa los tres recursos antes de continuar al quiz de certificación</p>
- 
-    <div class="android-notice">
-      <i class="ti ti-brand-android"></i>
-      <span><strong>Solo Android.</strong> Beetrack no está disponible en iPhone. Si tienes iOS, avísale a tu supervisor antes de continuar.</span>
-    </div>
- 
-    <div class="res-card">
-      <div class="res-icon ri-g"><i class="ti ti-clipboard-list"></i></div>
-      <div class="res-info">
-        <h4>Instructivo completo CATEX</h4>
-        <p>Operación, protocolos, EPP y video resumen del servicio</p>
-      </div>
-      <a class="res-btn" id="rb1"
-         href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec"
-         target="_blank" rel="noopener" onclick="mr('r1',this)">
-        <i class="ti ti-external-link"></i> Abrir
-      </a>
-    </div>
- 
-    <div class="res-card">
-      <div class="res-icon ri-a"><i class="ti ti-file-text"></i></div>
-      <div class="res-info">
-        <h4>Instructivo primer día</h4>
-        <p>Lo más importante para tu primera jornada de reparto</p>
-      </div>
-      <a class="res-btn" id="rb2"
-         href="https://drive.google.com/file/d/1irNHKG_cNBcPoPLLHJ9mKBJR_LLKqmGI/view?usp=sharing"
-         target="_blank" rel="noopener" onclick="mr('r2',this)">
-        <i class="ti ti-download"></i> Descargar
-      </a>
-    </div>
- 
-    <div class="res-card">
-      <div class="res-icon ri-b"><i class="ti ti-brand-google-play"></i></div>
-      <div class="res-info">
-        <h4>App Beetrack (solo Android)</h4>
-        <p>Descarga la app que usarás para gestionar tus envíos</p>
-      </div>
-      <a class="res-btn" id="rb3"
-         href="https://play.google.com/store/apps/details?id=me.beelink.beetrack2&pcampaignid=web_share"
-         target="_blank" rel="noopener" onclick="mr('r3',this)">
-        <i class="ti ti-download"></i> Descargar
-      </a>
-    </div>
- 
-    <button class="btn-p" onclick="ns(3)">Ir al quiz <i class="ti ti-arrow-right"></i></button>
-    <button class="btn-s" onclick="gs(2)"><i class="ti ti-arrow-left"></i> Volver</button>
-  </div>
- 
-  <!-- STEP 4: Quiz -->
-  <div class="sc" id="s4" style="display:none">
-    <div class="quiz-banner">
-      <i class="ti ti-certificate"></i>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo"><i class="ti ti-truck-delivery"></i></div>
       <div>
-        <h3>Quiz de certificación CATEX</h3>
-        <p>Completa el quiz y firma. Al terminar, vuelve aquí y confirma.</p>
+        <div class="header-title">CATEX Drivers</div>
+        <div class="header-sub">Portal de Registro</div>
       </div>
     </div>
- 
-    <div class="res-card">
-      <div class="res-icon ri-g"><i class="ti ti-pencil"></i></div>
-      <div class="res-info">
-        <h4>Rendir quiz ahora</h4>
-        <p>Se abrirá en una nueva ventana. Regresa aquí al finalizar.</p>
-      </div>
-      <a class="res-btn"
-         href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec"
-         target="_blank" rel="noopener">
-        <i class="ti ti-external-link"></i> Ir al quiz
-      </a>
-    </div>
- 
-    <div class="check-row">
-      <input type="checkbox" id="qck" onchange="qchk(this)">
-      <label for="qck">Confirmo que completé el quiz y lo firmé digitalmente</label>
-    </div>
- 
-    <button class="btn-p" id="bfin" onclick="fin()" disabled>
-      <i class="ti ti-check"></i> Finalizar registro
+    <button class="btn-dashboard" onclick="abrirLoginDash()">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
     </button>
-    <button class="btn-s" onclick="gs(3)"><i class="ti ti-arrow-left"></i> Volver</button>
-  </div>
- 
-  <!-- PERFIL FINAL -->
-  <div class="sc" id="sp" style="display:none">
-    <div class="success-wrap">
-      <div class="success-icon"><i class="ti ti-circle-check"></i></div>
-      <p style="font-size:16px;font-weight:600">¡Registro completado!</p>
-      <p style="font-size:12px;color:var(--text-2);margin-top:4px">Tu supervisor revisará tu información y te enviará el acceso a Beetrack</p>
+  </header>
+
+  <!-- ============================================================
+       PORTAL VIEW
+  ============================================================ -->
+  <main class="main" id="portalView">
+
+    <!-- Progress -->
+    <div class="progress-container" id="progressBox">
+      <div class="progress-header">
+        <span class="progress-label" id="progLabel">Paso 1 — Datos personales</span>
+        <span class="progress-count" id="progCount">1 de 5</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progFill" style="width:20%"></div>
+      </div>
+      <div class="progress-steps">
+        <div class="step-pill active" id="sp1"><div class="step-dot">1</div><span class="step-name">Datos</span></div>
+        <div class="step-pill"        id="sp2"><div class="step-dot">2</div><span class="step-name">Vehículo</span></div>
+        <div class="step-pill"        id="sp3"><div class="step-dot">3</div><span class="step-name">Días</span></div>
+        <div class="step-pill"        id="sp4"><div class="step-dot">4</div><span class="step-name">Inducción</span></div>
+        <div class="step-pill"        id="sp5"><div class="step-dot">5</div><span class="step-name">Quiz</span></div>
+      </div>
     </div>
-    <div class="perf-card">
-      <div class="perf-hdr">
-        <div class="avatar" id="pav">DC</div>
-        <div>
-          <p style="font-weight:600;font-size:14px" id="pnm">—</p>
-          <p style="font-size:11px;color:var(--text-2)" id="pct">—</p>
+
+    <!-- PASO 1 — Datos personales -->
+    <div class="card" id="paso1">
+      <div class="card-title"><i class="ti ti-user"></i> Datos personales</div>
+      <p class="card-desc">Completa tu información de contacto para registrarte como driver CATEX.</p>
+
+      <div class="field">
+        <label>Nombre completo <span class="req">*</span></label>
+        <input type="text" id="p1_nombre" placeholder="Ej: Juan Pérez González" />
+        <div class="ferr" id="e_nombre">Ingresa tu nombre completo.</div>
+      </div>
+
+      <div class="frow">
+        <div class="field">
+          <label>RUT <span class="req">*</span></label>
+          <input type="text" id="p1_rut" placeholder="12.345.678-9" />
+          <div class="ferr" id="e_rut">Ingresa un RUT válido.</div>
         </div>
-        <div style="margin-left:auto"><span class="badge-ok"><i class="ti ti-check"></i> Completo</span></div>
+        <div class="field">
+          <label>Celular <span class="req">*</span></label>
+          <input type="tel" id="p1_cel" placeholder="+56 9 1234 5678" />
+          <div class="ferr" id="e_cel">Ingresa tu celular.</div>
+        </div>
       </div>
-      <ul class="cl">
-        <li class="ok"><i class="ti ti-check"></i> Datos personales registrados</li>
-        <li class="ok"><i class="ti ti-check"></i> Vehículo ingresado</li>
-        <li class="ok"><i class="ti ti-check"></i> Disponibilidad confirmada</li>
-        <li class="ok"><i class="ti ti-check"></i> Material de inducción revisado</li>
-        <li class="ok"><i class="ti ti-check"></i> Quiz completado y firmado</li>
-        <li class="pend"><i class="ti ti-clock"></i> Cuenta Beetrack — tu supervisor la creará pronto</li>
-      </ul>
-    </div>
-  </div>
-</div>
- 
-<!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
-<div class="view" id="v-dsh">
-  <div class="dw">
-    <div class="metrics">
-      <div class="mc"><div class="mc-lbl">Total registrados</div><div class="mc-val" id="mt">0</div><div class="mc-sub">drivers</div></div>
-      <div class="mc"><div class="mc-lbl">Completos</div><div class="mc-val" id="mc2" style="color:var(--green-base)">0</div><div class="mc-sub">quiz aprobado</div></div>
-      <div class="mc"><div class="mc-lbl">En proceso</div><div class="mc-val" id="mpr" style="color:#BA7517">0</div><div class="mc-sub">faltan pasos</div></div>
-      <div class="mc"><div class="mc-lbl">Sin Beetrack</div><div class="mc-val" id="mb" style="color:#E24B4A">0</div><div class="mc-sub">cuenta pendiente</div></div>
-    </div>
- 
-    <div class="dtbar">
-      <h2>Drivers registrados</h2>
-      <input class="dsrch" type="text" id="ds" placeholder="Buscar nombre, patente, ciudad…" oninput="rt()">
-      <button class="exp-btn" onclick="expCSV()"><i class="ti ti-download"></i> Exportar CSV</button>
-    </div>
- 
-    <div class="tbl-wrap">
-      <table class="dt">
-        <thead><tr>
-          <th>Driver</th><th>RUT</th><th>Correo</th><th>Patente</th>
-          <th>Ciudad / Local</th><th>Días</th><th>Estado</th><th>Beetrack</th><th></th>
-        </tr></thead>
-        <tbody id="tb"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
- 
-<!-- MODAL -->
-<div class="ov" id="ov">
-  <div class="mbox">
-    <div class="mhdr">
-      <h3 id="mtt">Detalle driver</h3>
-      <button class="mcl" onclick="cm()"><i class="ti ti-x"></i></button>
-    </div>
-    <div id="mb2"></div>
-  </div>
-</div>
- 
-<div class="toast" id="tst"><i class="ti ti-check"></i><span id="tm"></span></div>
- 
-<script>
-const DIAS_ALL = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxvQNhE-IJNuI-I6P-lZG5Me3J0rckCXaaIPxQjm66tbPhv89mUjn4X8U6k7TUi8Jhm/exec";
-const DASHBOARD_PWD = "catex2026";
-let dashUnlocked = false;
-const STEP_LBLS = ['Datos personales','Datos del vehículo','Disponibilidad','Material inducción','Quiz y firma'];
-let cs = 0, done = [false,false,false,false,false];
- 
-// Demo drivers — en producción esto vendría de una base de datos
-let drivers = [
-  {nombre:'Carlos Muñoz',rut:'15.234.567-8',email:'carlos.m@gmail.com',tel:'+56912345678',ciudad:'Valdivia',local:'L94',patente:'BBCD12',marca:'Mercedes',modelo:'Sprinter',alto:190,largo:300,ancho:165,chofer:'Carlos Muñoz',chofer_rut:'15.234.567-8',chofer_cel:'+56912345678',dias:['Lun','Mar','Mié','Jue'],estado:'completo',beetrack:true},
-  {nombre:'Ana Torres',rut:'17.890.123-4',email:'ana.t@gmail.com',tel:'+56987654321',ciudad:'Puerto Montt',local:'L99',patente:'XYZK45',marca:'Fiat',modelo:'Ducato',alto:180,largo:290,ancho:160,chofer:'Ana Torres',chofer_rut:'17.890.123-4',chofer_cel:'+56987654321',dias:['Lun','Mié','Vie'],estado:'proceso',beetrack:false},
-  {nombre:'Roberto Díaz',rut:'12.111.222-3',email:'rdiaz@hotmail.com',tel:'+56911223344',ciudad:'Santiago',local:'RM',patente:'FFGG78',marca:'VW',modelo:'Crafter',alto:200,largo:320,ancho:170,chofer:'Roberto Díaz',chofer_rut:'12.111.222-3',chofer_cel:'+56911223344',dias:['Mar','Jue','Sáb'],estado:'inicio',beetrack:false},
-];
- 
-function sv(v) {
-  if (v === 'dsh' && !dashUnlocked) {
-    document.getElementById('login-overlay').style.display = 'flex';
-    setTimeout(() => document.getElementById('pwd-input').focus(), 150);
-    return;
-  }
-  _sv(v);
-}
- 
-function _sv(v) {
-  document.getElementById('v-drv').classList.toggle('on', v==='drv');
-  document.getElementById('v-dsh').classList.toggle('on', v==='dsh');
-  document.getElementById('t-drv').classList.toggle('on', v==='drv');
-  document.getElementById('t-dsh').classList.toggle('on', v==='dsh');
-  if (v==='dsh') rt();
-}
- 
-function gs(n) {
-  document.getElementById('s'+cs).style.display='none';
-  cs = n;
-  document.getElementById('s'+n).style.display='block';
-  document.getElementById('sp').style.display='none';
-  up(); ut();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
- 
-function ns(n) {
-  // Validaciones
-  if (n===0) {
-    const nm=document.getElementById('fn').value.trim();
-    const rut=document.getElementById('fr').value.trim();
-    const tel=document.getElementById('ft').value.trim();
-    const em=document.getElementById('fe').value.trim();
-    const city=document.querySelector('.city-chip.sel');
-    if (!nm||!rut||!tel||!em||!city) {
-      document.getElementById('err0').style.display='flex';
-      return;
-    }
-    document.getElementById('err0').style.display='none';
-  }
-  if (n===1) {
-    const ch=document.querySelector('.pc')?.value.trim();
-    const pt=document.querySelector('.pp')?.value.trim();
-    const al=document.querySelector('.pa')?.value.trim();
-    const la=document.querySelector('.pla')?.value.trim();
-    const aw=document.querySelector('.pw')?.value.trim();
-    const cr=document.querySelector('.prut')?.value.trim();
-    const cc=document.querySelector('.pcel')?.value.trim();
-    if (!ch||!pt||!al||!la||!aw||!cr||!cc) {
-      document.getElementById('err1').style.display='flex';
-      return;
-    }
-    document.getElementById('err1').style.display='none';
-  }
-  if (n===2) {
-    const dias=[...document.querySelectorAll('.dia.sel')];
-    if (!dias.length) {
-      document.getElementById('err2').style.display='flex';
-      return;
-    }
-    document.getElementById('err2').style.display='none';
-  }
-  done[n]=true; ut(); gs(n+1);
-}
- 
-function up() {
-  const pct = Math.round((cs/5)*100);
-  document.getElementById('pf').style.width = pct+'%';
-  document.getElementById('pl').textContent = 'Paso '+(cs+1)+' de 5 — '+STEP_LBLS[cs];
-}
- 
-function ut() {
-  for(let i=0;i<5;i++){
-    const t=document.getElementById('tab'+i);
-    t.className='stab';
-    if(i===cs) t.classList.add('on');
-    else if(done[i]) t.classList.add('done');
-  }
-}
- 
-function selCity(el) {
-  document.querySelectorAll('.city-chip').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');
-}
- 
-function mr(key, el) {
-  el.className='res-btn done';
-  el.innerHTML='<i class="ti ti-check"></i> Listo';
-}
- 
-function qchk(cb) {
-  document.getElementById('bfin').disabled = !cb.checked;
-}
- 
-function fin() {
-  const nm  = document.getElementById('fn').value || 'Driver';
-  const city = document.querySelector('.city-chip.sel');
-  const cn  = city?.dataset.c || '—';
-  const cl  = city?.dataset.l || '—';
-  const ini = nm.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-  const dias = [...document.querySelectorAll('.dia.sel')].map(d=>d.dataset.d);
- 
-  document.getElementById('pav').textContent = ini || 'DC';
-  document.getElementById('pnm').textContent = nm;
-  document.getElementById('pct').textContent = cn+' — '+cl;
- 
-  drivers.push({
-    nombre: nm,
-    rut:    document.getElementById('fr').value,
-    email:  document.getElementById('fe').value,
-    tel:    document.getElementById('ft').value,
-    ciudad: cn, local: cl,
-    patente:(document.querySelector('.pp')?.value||'').toUpperCase(),
-    marca:   document.querySelector('.pm')?.value  || '',
-    modelo:  document.querySelector('.pmo')?.value || '',
-    alto:    document.querySelector('.pa')?.value  || '',
-    largo:   document.querySelector('.pla')?.value || '',
-    ancho:   document.querySelector('.pw')?.value  || '',
-    chofer:  document.querySelector('.pc')?.value  || nm,
-    chofer_rut: document.querySelector('.prut')?.value || '',
-    chofer_cel: document.querySelector('.pcel')?.value || '',
-    dias, estado:'completo', beetrack:false
-  });
- 
-  for(let i=0;i<5;i++) document.getElementById('s'+i).style.display='none';
-  document.getElementById('sp').style.display='block';
-  document.getElementById('pf').style.width='100%';
-  document.getElementById('pl').textContent='¡Registro finalizado!';
-  window.scrollTo({top:0, behavior:'smooth'});
-  toast('Registro enviado al supervisor');
-  // Enviar a Google Sheets
-  enviarASheets({
-    nombre: nm,
-    rut:    document.getElementById('fr').value,
-    email:  document.getElementById('fe').value,
-    tel:    document.getElementById('ft').value,
-    ciudad: city?.dataset.c || '',
-    local:  city?.dataset.l || '',
-    patente:(document.querySelector('.pp')?.value||'').toUpperCase(),
-    marca:   document.querySelector('.pm')?.value  || '',
-    modelo:  document.querySelector('.pmo')?.value || '',
-    alto:    document.querySelector('.pa')?.value  || '',
-    largo:   document.querySelector('.pla')?.value || '',
-    ancho:   document.querySelector('.pw')?.value  || '',
-    chofer:  document.querySelector('.pc')?.value  || nm,
-    chofer_rut: document.querySelector('.prut')?.value || '',
-    chofer_cel: document.querySelector('.pcel')?.value || '',
-    dias,
-    estado: 'completo',
-    beetrack: false
-  });
-}
- 
-function rt() {
-  const q = (document.getElementById('ds')?.value||'').toLowerCase();
-  const f = drivers.filter(d =>
-    (d.nombre||'').toLowerCase().includes(q) ||
-    (d.patente||'').toLowerCase().includes(q) ||
-    (d.ciudad||'').toLowerCase().includes(q) ||
-    (d.local||'').toLowerCase().includes(q) ||
-    (d.email||'').toLowerCase().includes(q)
-  );
-  const tb = document.getElementById('tb');
-  if (!f.length) {
-    tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2.5rem;color:var(--text-2);font-size:13px">Sin resultados</td></tr>';
-  } else {
-    tb.innerHTML = f.map(d => {
-      const dias = d.dias||[];
-      const dh = '<div class="dmini">'+DIAS_ALL.map(x=>`<div class="dd ${dias.includes(x)?'sel':''}">${x[0]}</div>`).join('')+'</div>';
-      const bc = d.estado==='completo'?'b-ok':d.estado==='proceso'?'b-par':'b-ini';
-      const bl = d.estado==='completo'?'Completo':d.estado==='proceso'?'En proceso':'Iniciado';
-      const bee = d.beetrack
-        ? '<span class="sbadge b-ok"><i class="ti ti-check"></i> Activo</span>'
-        : '<span class="sbadge b-pnd">Pendiente</span>';
-      const idx = drivers.indexOf(d);
-      return `<tr>
-        <td style="font-weight:600;white-space:nowrap">${d.nombre}</td>
-        <td style="font-family:var(--mono);font-size:11px">${d.rut||'—'}</td>
-        <td style="font-size:11px;color:var(--text-2)">${d.email||'—'}</td>
-        <td><span class="vchip">${d.patente||'—'}</span></td>
-        <td><span style="font-weight:500">${d.ciudad||'—'}</span><br><span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">${d.local||''}</span></td>
-        <td>${dh}</td>
-        <td><span class="sbadge ${bc}">${bl}</span></td>
-        <td>${bee}</td>
-        <td><button onclick="om(${idx})" style="border:1px solid var(--border-2);background:var(--card);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:12px;font-family:var(--font);color:var(--text)"><i class="ti ti-eye"></i></button></td>
-      </tr>`;
-    }).join('');
-  }
-  document.getElementById('mt').textContent  = drivers.length;
-  document.getElementById('mc2').textContent = drivers.filter(d=>d.estado==='completo').length;
-  document.getElementById('mpr').textContent = drivers.filter(d=>d.estado!=='completo').length;
-  document.getElementById('mb').textContent  = drivers.filter(d=>!d.beetrack).length;
-}
- 
-function om(i) {
-  const d = drivers[i];
-  document.getElementById('mtt').textContent = d.nombre;
-  const dias = (d.dias||[]).join(', ') || '—';
-  document.getElementById('mb2').innerHTML = `
-    <div class="sect-div">Datos personales</div>
-    <div class="drow"><span class="dl">RUT</span><span class="dv" style="font-family:var(--mono)">${d.rut||'—'}</span></div>
-    <div class="drow"><span class="dl">Email</span><span class="dv">${d.email||'—'}</span></div>
-    <div class="drow"><span class="dl">Teléfono</span><span class="dv">${d.tel||'—'}</span></div>
-    <div class="drow"><span class="dl">Ciudad</span><span class="dv">${d.ciudad||'—'} <span style="font-family:var(--mono);font-size:10px;color:var(--text-3)">${d.local||''}</span></span></div>
-    <div class="drow"><span class="dl">Disponibilidad</span><span class="dv">${dias}</span></div>
-    <div class="sect-div">Vehículo</div>
-    <div class="drow"><span class="dl">Patente</span><span class="dv" style="font-family:var(--mono);font-weight:600">${d.patente||'—'}</span></div>
-    <div class="drow"><span class="dl">Vehículo</span><span class="dv">${[d.marca,d.modelo].filter(Boolean).join(' ')||'—'}</span></div>
-    <div class="drow"><span class="dl">Nombre chofer</span><span class="dv">${d.chofer||d.nombre}</span></div>
-    <div class="drow"><span class="dl">RUT chofer</span><span class="dv" style="font-family:var(--mono)">${d.chofer_rut||'—'}</span></div>
-    <div class="drow"><span class="dl">Cel chofer</span><span class="dv">${d.chofer_cel||'—'}</span></div>
-    <div class="drow"><span class="dl">Alto interior</span><span class="dv">${d.alto||'—'} cm</span></div>
-    <div class="drow"><span class="dl">Largo interior</span><span class="dv">${d.largo||'—'} cm</span></div>
-    <div class="drow"><span class="dl">Ancho interior</span><span class="dv">${d.ancho||'—'} cm</span></div>
-    <div class="bts">
-      <span class="btl"><i class="ti ti-device-mobile"></i> Cuenta Beetrack</span>
-      <div class="btog">
-        <button class="bb ${d.beetrack?'ay':''}" onclick="sbt(${i},true)">Creada</button>
-        <button class="bb ${!d.beetrack?'an':''}" onclick="sbt(${i},false)">Pendiente</button>
+
+      <div class="field">
+        <label>Correo electrónico <span class="req">*</span></label>
+        <input type="email" id="p1_email" placeholder="tucorreo@ejemplo.com" />
+        <div class="ferr" id="e_email">Ingresa un correo válido.</div>
       </div>
-    </div>`;
-  document.getElementById('ov').classList.add('open');
-}
- 
-function cm()  { document.getElementById('ov').classList.remove('open'); }
- 
-function sbt(i, v) {
-  drivers[i].beetrack = v;
-  om(i); rt();
-  toast(v ? 'Beetrack marcado como activo' : 'Marcado como pendiente');
-}
- 
-function expCSV() {
-  const h = ['Nombre','RUT','Email','Teléfono','Ciudad','Local','Patente','Marca','Modelo',
-             'Alto cm','Largo cm','Ancho cm','Chofer','RUT Chofer','Cel Chofer',
-             'Días disponibles','Estado','Beetrack'];
-  const rows = drivers.map(d => [
-    d.nombre,d.rut,d.email,d.tel,d.ciudad,d.local,d.patente,d.marca,d.modelo,
-    d.alto,d.largo,d.ancho,d.chofer,d.chofer_rut,d.chofer_cel,
-    (d.dias||[]).join(' - '),d.estado,d.beetrack?'Sí':'No'
-  ].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
-  const csv = [h.join(','), ...rows].join('\n');
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'catex_drivers_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('CSV exportado — ábrelo en Google Sheets');
-}
- 
-function toast(msg) {
-  const t = document.getElementById('tst');
-  document.getElementById('tm').textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
-}
- 
-window.onclick = e => {
-  if (e.target === document.getElementById('ov')) cm();
-};
- 
-async function enviarASheets(datos) {
-  try {
-    await fetch(SHEETS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(datos)
+
+      <div class="field">
+        <label>Ciudad de operación <span class="req">*</span></label>
+        <div class="city-grid" id="cityGrid">
+          <button class="city-btn" data-ciudad="Viña del Mar" data-local="L58"   onclick="selCity(this)"><span class="city-name">Viña del Mar</span><span class="city-code">L58</span></button>
+          <button class="city-btn" data-ciudad="Rancagua"     data-local="L35"   onclick="selCity(this)"><span class="city-name">Rancagua</span><span class="city-code">L35</span></button>
+          <button class="city-btn" data-ciudad="Iquique"      data-local="L679"  onclick="selCity(this)"><span class="city-name">Iquique</span><span class="city-code">L679</span></button>
+          <button class="city-btn" data-ciudad="Chillán"      data-local="L6010" onclick="selCity(this)"><span class="city-name">Chillán</span><span class="city-code">L6010</span></button>
+          <button class="city-btn" data-ciudad="Temuco"       data-local="L6004" onclick="selCity(this)"><span class="city-name">Temuco</span><span class="city-code">L6004</span></button>
+          <button class="city-btn" data-ciudad="Antofagasta"  data-local="L6003" onclick="selCity(this)"><span class="city-name">Antofagasta</span><span class="city-code">L6003</span></button>
+          <button class="city-btn" data-ciudad="Concón"       data-local="L747"  onclick="selCity(this)"><span class="city-name">Concón</span><span class="city-code">L747</span></button>
+          <button class="city-btn" data-ciudad="Puerto Montt" data-local="L99"   onclick="selCity(this)"><span class="city-name">Puerto Montt</span><span class="city-code">L99</span></button>
+          <button class="city-btn" data-ciudad="Valdivia"     data-local="L94"   onclick="selCity(this)"><span class="city-name">Valdivia</span><span class="city-code">L94</span></button>
+          <button class="city-btn" data-ciudad="Calama"       data-local="L33"   onclick="selCity(this)"><span class="city-name">Calama</span><span class="city-code">L33</span></button>
+          <button class="city-btn" data-ciudad="Santiago"     data-local="RM"    onclick="selCity(this)"><span class="city-name">Santiago</span><span class="city-code">RM</span></button>
+          <button class="city-btn" data-ciudad="Concepción"   data-local="L89"   onclick="selCity(this)"><span class="city-name">Concepción</span><span class="city-code">L89</span></button>
+        </div>
+        <div class="ferr" id="e_ciudad" style="display:none">Selecciona tu ciudad de operación.</div>
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn-primary" onclick="irA(2)">Siguiente <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- PASO 2 — Vehículo -->
+    <div class="card" id="paso2" style="display:none">
+      <div class="card-title"><i class="ti ti-car"></i> Datos del vehículo</div>
+      <p class="card-desc">Registra el vehículo que usarás en CATEX. Un driver = un vehículo.</p>
+
+      <div class="alert alert-warn">
+        <i class="ti ti-ruler-measure"></i>
+        <span><strong>Ingresa las medidas del INTERIOR de la carrocería.</strong> No copies de internet.</span>
+      </div>
+
+      <div class="frow">
+        <div class="field">
+          <label>Nombre del chofer <span class="req">*</span></label>
+          <input type="text" id="p2_chofer"     placeholder="Puede diferir del dueño" />
+          <div class="ferr" id="e_chofer">Requerido.</div>
+        </div>
+        <div class="field">
+          <label>RUT del chofer <span class="req">*</span></label>
+          <input type="text" id="p2_crut"       placeholder="12.345.678-9" />
+          <div class="ferr" id="e_crut">Requerido.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Celular del chofer <span class="req">*</span></label>
+        <input type="tel" id="p2_ccel" placeholder="+56 9 1234 5678" />
+        <div class="ferr" id="e_ccel">Requerido.</div>
+      </div>
+
+      <div class="field">
+        <label>Patente <span class="req">*</span></label>
+        <input type="text" id="p2_patente" class="mono" placeholder="ABCD12 o AB1234" maxlength="8" />
+        <div class="ferr" id="e_patente">Requerido.</div>
+      </div>
+
+      <div class="frow">
+        <div class="field">
+          <label>Marca <span class="req">*</span></label>
+          <input type="text" id="p2_marca"  placeholder="Ej: Mercedes-Benz" />
+          <div class="ferr" id="e_marca">Requerido.</div>
+        </div>
+        <div class="field">
+          <label>Modelo <span class="req">*</span></label>
+          <input type="text" id="p2_modelo" placeholder="Ej: Sprinter 315" />
+          <div class="ferr" id="e_modelo">Requerido.</div>
+        </div>
+      </div>
+
+      <div class="frow3">
+        <div class="field">
+          <label>Alto int. (cm) <span class="req">*</span></label>
+          <input type="number" id="p2_alto"  placeholder="180" min="1" />
+          <div class="ferr" id="e_alto">Requerido.</div>
+        </div>
+        <div class="field">
+          <label>Largo int. (cm) <span class="req">*</span></label>
+          <input type="number" id="p2_largo" placeholder="350" min="1" />
+          <div class="ferr" id="e_largo">Requerido.</div>
+        </div>
+        <div class="field">
+          <label>Ancho int. (cm) <span class="req">*</span></label>
+          <input type="number" id="p2_ancho" placeholder="200" min="1" />
+          <div class="ferr" id="e_ancho">Requerido.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="irA(1)"><i class="ti ti-arrow-left"></i> Atrás</button>
+        <button class="btn-primary"   onclick="irA(3)">Siguiente <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- PASO 3 — Días -->
+    <div class="card" id="paso3" style="display:none">
+      <div class="card-title"><i class="ti ti-calendar-week"></i> Disponibilidad semanal</div>
+      <p class="card-desc">Selecciona los días en que puedes trabajar (mínimo 1).</p>
+
+      <div class="days-grid" id="daysGrid">
+        <button class="day-btn" data-dia="Lun" onclick="toggleDia(this)">Lun</button>
+        <button class="day-btn" data-dia="Mar" onclick="toggleDia(this)">Mar</button>
+        <button class="day-btn" data-dia="Mié" onclick="toggleDia(this)">Mié</button>
+        <button class="day-btn" data-dia="Jue" onclick="toggleDia(this)">Jue</button>
+        <button class="day-btn" data-dia="Vie" onclick="toggleDia(this)">Vie</button>
+        <button class="day-btn" data-dia="Sáb" onclick="toggleDia(this)">Sáb</button>
+        <button class="day-btn" data-dia="Dom" onclick="toggleDia(this)">Dom</button>
+      </div>
+      <div class="ferr" id="e_dias" style="display:none;margin-top:8px">Selecciona al menos un día.</div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="irA(2)"><i class="ti ti-arrow-left"></i> Atrás</button>
+        <button class="btn-primary"   onclick="irA(4)">Siguiente <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- PASO 4 — Inducción -->
+    <div class="card" id="paso4" style="display:none">
+      <div class="card-title"><i class="ti ti-books"></i> Material de inducción</div>
+      <p class="card-desc">Revisa estos recursos antes de continuar. Se abren en una nueva pestaña.</p>
+
+      <div class="resource-card">
+        <div class="rc-info">
+          <div class="rc-icon"><i class="ti ti-file-text"></i></div>
+          <div>
+            <div class="rc-title">Instructivo completo CATEX</div>
+            <div class="rc-desc">Guía de operaciones y procedimientos</div>
+          </div>
+        </div>
+        <a class="btn-rc" href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec" target="_blank" rel="noopener">
+          <i class="ti ti-external-link"></i> Abrir
+        </a>
+      </div>
+
+      <div class="resource-card">
+        <div class="rc-info">
+          <div class="rc-icon"><i class="ti ti-file-type-pdf"></i></div>
+          <div>
+            <div class="rc-title">Instructivo primer día (PDF)</div>
+            <div class="rc-desc">Qué hacer el primer día de trabajo</div>
+          </div>
+        </div>
+        <a class="btn-rc" href="https://drive.google.com/file/d/1irNHKG_cNBcPoPLLHJ9mKBJR_LLKqmGI/view?usp=sharing" target="_blank" rel="noopener">
+          <i class="ti ti-external-link"></i> Abrir
+        </a>
+      </div>
+
+      <div class="resource-card">
+        <div class="rc-info">
+          <div class="rc-icon"><i class="ti ti-brand-android"></i></div>
+          <div>
+            <div class="rc-title">App Beetrack</div>
+            <div class="rc-desc">Seguimiento de rutas y entregas</div>
+          </div>
+        </div>
+        <a class="btn-rc" href="https://play.google.com/store/apps/details?id=me.beelink.beetrack2" target="_blank" rel="noopener">
+          <i class="ti ti-external-link"></i> Abrir
+        </a>
+      </div>
+
+      <div class="alert alert-error">
+        <i class="ti ti-brand-apple"></i>
+        <span><strong>Solo Android.</strong> La app Beetrack no está disponible en iPhone.</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="irA(3)"><i class="ti ti-arrow-left"></i> Atrás</button>
+        <button class="btn-primary"   onclick="irA(5)">Siguiente <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- PASO 5 — Quiz -->
+    <div class="card" id="paso5" style="display:none">
+      <div class="card-title"><i class="ti ti-certificate"></i> Quiz y certificación</div>
+      <p class="card-desc">Completa el quiz de inducción y confirma tu participación para finalizar.</p>
+
+      <div class="resource-card">
+        <div class="rc-info">
+          <div class="rc-icon"><i class="ti ti-question-mark"></i></div>
+          <div>
+            <div class="rc-title">Quiz de inducción CATEX</div>
+            <div class="rc-desc">Evaluación y firma digital</div>
+          </div>
+        </div>
+        <a class="btn-rc" href="https://script.google.com/a/macros/valdishopper.com/s/AKfycbzJSbERrDyzCWaYNAnUChHkR2XR1O5IcpAPt--KGEhdQyHTivPTeNo-OIIkbrS2Y4PCyg/exec" target="_blank" rel="noopener">
+          <i class="ti ti-external-link"></i> Abrir Quiz
+        </a>
+      </div>
+
+      <label class="check-label" for="chkQuiz">
+        <input type="checkbox" id="chkQuiz" onchange="onChkQuiz()" />
+        <span>Confirmo que completé el quiz y lo firmé digitalmente.</span>
+      </label>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="irA(4)"><i class="ti ti-arrow-left"></i> Atrás</button>
+        <button class="btn-primary" id="btnFin" disabled onclick="finalizar()">
+          <i class="ti ti-send"></i> Finalizar registro
+        </button>
+      </div>
+    </div>
+
+    <!-- PERFIL FINAL -->
+    <div class="card profile-card" id="pasoFin" style="display:none">
+      <div class="profile-avatar" id="finAvatar">JD</div>
+      <div class="profile-name"   id="finNombre">—</div>
+      <div class="profile-city"   id="finCiudad">—</div>
+      <div class="badge-ok"><i class="ti ti-circle-check"></i> Registro completo</div>
+      <div class="checklist">
+        <div class="ci"><i class="ti ti-circle-check"></i><span>Datos personales</span></div>
+        <div class="ci"><i class="ti ti-circle-check"></i><span>Datos del vehículo</span></div>
+        <div class="ci"><i class="ti ti-circle-check"></i><span>Disponibilidad semanal</span></div>
+        <div class="ci"><i class="ti ti-circle-check"></i><span>Material de inducción revisado</span></div>
+        <div class="ci"><i class="ti ti-circle-check"></i><span>Quiz completado y firmado</span></div>
+        <div class="ci pend"><i class="ti ti-clock"></i><span>Cuenta Beetrack — tu supervisor la creará pronto</span></div>
+      </div>
+      <button class="btn-nuevo" onclick="nuevoReg()"><i class="ti ti-plus"></i> Nuevo registro</button>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       DASHBOARD VIEW
+  ============================================================ -->
+  <div id="dashView">
+    <div style="max-width:1080px;margin:0 auto;padding:24px 16px 64px">
+
+      <div class="dash-header">
+        <div>
+          <div class="dash-title"><i class="ti ti-layout-dashboard"></i> Dashboard Supervisor</div>
+          <div class="dash-sub">Registros de drivers — sesión actual</div>
+        </div>
+        <div class="dash-actions">
+          <button class="btn-export" onclick="exportCSV()"><i class="ti ti-download"></i> Exportar CSV</button>
+          <button class="btn-exit"   onclick="cerrarDash()"><i class="ti ti-x"></i> Salir</button>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-ico"><i class="ti ti-users"></i></div>
+          <div class="metric-lbl">Total registrados</div>
+          <div class="metric-val" id="mTotal">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-ico"><i class="ti ti-circle-check"></i></div>
+          <div class="metric-lbl">Completos</div>
+          <div class="metric-val" id="mCompletos">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-ico"><i class="ti ti-clock"></i></div>
+          <div class="metric-lbl">En proceso</div>
+          <div class="metric-val" id="mProceso">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-ico"><i class="ti ti-device-mobile-off"></i></div>
+          <div class="metric-lbl">Sin Beetrack</div>
+          <div class="metric-val" id="mBee">0</div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <i class="ti ti-search"></i>
+        <input type="text" id="searchQ" placeholder="Buscar por nombre, patente, ciudad o local..." oninput="filtrar()" />
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>RUT</th>
+                <th>Correo</th>
+                <th>Patente</th>
+                <th>Ciudad / Local</th>
+                <th>Días</th>
+                <th>Estado</th>
+                <th>Beetrack</th>
+                <th>Ver</th>
+              </tr>
+            </thead>
+            <tbody id="tBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-st" id="emptyMsg">
+          <i class="ti ti-inbox"></i>
+          <div style="font-weight:600;color:#374151;margin-bottom:3px">Sin registros aún</div>
+          <div style="font-size:.8rem">Los drivers registrados aparecerán aquí.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       OVERLAYS
+  ============================================================ -->
+
+  <!-- Login Dashboard -->
+  <div class="overlay" id="loginOv">
+    <div class="modal">
+      <div class="modal-title"><i class="ti ti-lock"></i> Acceso Supervisor</div>
+      <div class="modal-desc">Ingresa la contraseña para acceder al dashboard.</div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="dashPwd" placeholder="••••••••"
+               onkeydown="if(event.key==='Enter')chkPwd()" />
+        <div class="ferr" id="e_pwd" style="display:none">Contraseña incorrecta. Intenta de nuevo.</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="cerrarLoginOv()">Cancelar</button>
+        <button class="btn-primary"   onclick="chkPwd()"><i class="ti ti-login"></i> Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal detalle driver -->
+  <div class="overlay" id="driverOv">
+    <div class="modal driver-modal">
+      <div class="dm-header">
+        <div class="dm-avatar" id="dmAvatar">JD</div>
+        <div>
+          <div style="font-weight:700;font-size:1rem"  id="dmNombre">—</div>
+          <div style="font-size:.78rem;color:var(--c-muted)" id="dmCiudad">—</div>
+        </div>
+      </div>
+      <dl class="dl" id="dmDl"></dl>
+      <div class="btn-row" style="margin-top:18px">
+        <div></div>
+        <button class="btn-secondary" onclick="cerrarDriverOv()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-ov" id="loadOv">
+    <div class="spinner"></div>
+    <div class="loading-txt">Enviando tu registro...</div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ===== CONFIG ===== */
+    const SHEETS_URL    = "https://script.google.com/macros/s/AKfycbxvQNhE-IJNuI-I6P-lZG5Me3J0rckCXaaIPxQjm66tbPhv89mUjn4X8U6k7TUi8Jhm/exec";
+    const DASHBOARD_PWD = "catex2026";
+
+    /* ===== ESTADO ===== */
+    let d1 = {}, d2 = {}, dias = [], registros = [];
+
+    const STEP_LABELS = [
+      "Paso 1 — Datos personales",
+      "Paso 2 — Datos del vehículo",
+      "Paso 3 — Disponibilidad semanal",
+      "Paso 4 — Material de inducción",
+      "Paso 5 — Quiz y certificación"
+    ];
+
+    /* ===== NAVEGACIÓN ===== */
+    function irA(n) {
+      if (n === 2 && !val1()) return;
+      if (n === 3 && !val2()) return;
+      if (n === 4 && !val3()) return;
+      mostrarPaso(n);
+    }
+
+    function mostrarPaso(n) {
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById("paso" + i);
+        if (el) el.style.display = (i === n) ? "block" : "none";
+      }
+      document.getElementById("pasoFin").style.display = "none";
+      document.getElementById("progressBox").style.display = "block";
+
+      document.getElementById("progFill").style.width  = Math.round((n/5)*100) + "%";
+      document.getElementById("progLabel").textContent = STEP_LABELS[n-1];
+      document.getElementById("progCount").textContent = n + " de 5";
+
+      for (let i = 1; i <= 5; i++) {
+        const sp  = document.getElementById("sp" + i);
+        const dot = sp.querySelector(".step-dot");
+        sp.className = "step-pill";
+        if (i < n)       { sp.classList.add("done");   dot.innerHTML = '<i class="ti ti-check" style="font-size:.68rem"></i>'; }
+        else if (i === n){ sp.classList.add("active"); dot.textContent = i; }
+        else             { dot.textContent = i; }
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* ===== HELPERS ===== */
+    const g  = id => document.getElementById(id);
+    const gv = id => (g(id) || {}).value || "";
+
+    function setErr(inpId, errId, show) {
+      const inp = g(inpId), err = g(errId);
+      if (!inp || !err) return;
+      show ? (inp.classList.add("err"), err.style.display = "block")
+           : (inp.classList.remove("err"), err.style.display = "none");
+    }
+
+    function initials(name) {
+      return name.trim().split(/\s+/).slice(0,2).map(w => w[0]?.toUpperCase() || "").join("") || "??";
+    }
+
+    /* ===== VALIDACIONES ===== */
+    function val1() {
+      let ok = true;
+      const nombre = gv("p1_nombre").trim();
+      const rut    = gv("p1_rut").trim();
+      const cel    = gv("p1_cel").trim();
+      const email  = gv("p1_email").trim();
+      const ciudad = document.querySelector(".city-btn.sel");
+
+      setErr("p1_nombre", "e_nombre", !nombre);     if (!nombre) ok = false;
+      setErr("p1_rut",    "e_rut",    !rut);        if (!rut)    ok = false;
+      setErr("p1_cel",    "e_cel",    !cel);        if (!cel)    ok = false;
+      const eOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      setErr("p1_email",  "e_email",  !eOk);        if (!eOk)    ok = false;
+
+      const ec = g("e_ciudad");
+      if (!ciudad) { ec.style.display = "block"; ok = false; }
+      else          { ec.style.display = "none"; }
+
+      if (ok) d1 = { nombre, rut, tel: cel, email, ciudad: ciudad.dataset.ciudad, local: ciudad.dataset.local };
+      return ok;
+    }
+
+    function val2() {
+      let ok = true;
+      const flds = [
+        ["p2_chofer","e_chofer"],["p2_crut","e_crut"],["p2_ccel","e_ccel"],
+        ["p2_patente","e_patente"],["p2_marca","e_marca"],["p2_modelo","e_modelo"],
+        ["p2_alto","e_alto"],["p2_largo","e_largo"],["p2_ancho","e_ancho"]
+      ];
+      flds.forEach(([id,eid]) => {
+        const v = gv(id).trim();
+        setErr(id, eid, !v);
+        if (!v) ok = false;
+      });
+      if (ok) d2 = {
+        chofer: gv("p2_chofer").trim(), chofer_rut: gv("p2_crut").trim(),
+        chofer_cel: gv("p2_ccel").trim(), patente: gv("p2_patente").trim().toUpperCase(),
+        marca: gv("p2_marca").trim(), modelo: gv("p2_modelo").trim(),
+        alto: gv("p2_alto").trim(), largo: gv("p2_largo").trim(), ancho: gv("p2_ancho").trim()
+      };
+      return ok;
+    }
+
+    function val3() {
+      dias = [...document.querySelectorAll(".day-btn.sel")].map(b => b.dataset.dia);
+      const e = g("e_dias");
+      if (!dias.length) { e.style.display = "block"; return false; }
+      e.style.display = "none";
+      return true;
+    }
+
+    /* ===== SELECTORES ===== */
+    function selCity(btn) {
+      document.querySelectorAll(".city-btn").forEach(b => b.classList.remove("sel"));
+      btn.classList.add("sel");
+      g("e_ciudad").style.display = "none";
+    }
+
+    function toggleDia(btn) { btn.classList.toggle("sel"); }
+
+    function onChkQuiz() {
+      g("btnFin").disabled = !g("chkQuiz").checked;
+    }
+
+    /* ===== ENVÍO A SHEETS (solución CORS) ===== */
+    async function enviarASheets(datos) {
+      try {
+        const params = new URLSearchParams({ data: JSON.stringify(datos) });
+        const url = SHEETS_URL + "?" + params.toString();
+
+        // Método imagen invisible — más confiable sin CORS
+        const img = new Image();
+        img.src = url;
+
+        // Fetch GET como respaldo
+        fetch(url, { method: "GET", mode: "no-cors" }).catch(() => {});
+      } catch(err) {
+        console.warn("Sheets error:", err);
+      }
+    }
+
+    /* ===== FINALIZAR ===== */
+    async function finalizar() {
+      g("loadOv").classList.add("on");
+      const datos = { ...d1, ...d2, dias, estado: "completo", beetrack: false };
+      await enviarASheets(datos);
+      registros.push({ ...datos, id: Date.now(), beetrackCreada: false });
+      await new Promise(r => setTimeout(r, 1500));
+      g("loadOv").classList.remove("on");
+      mostrarPerfil(datos);
+    }
+
+    function mostrarPerfil(datos) {
+      g("progressBox").style.display = "none";
+      for (let i = 1; i <= 5; i++) { const el = g("paso" + i); if (el) el.style.display = "none"; }
+      g("finAvatar").textContent = initials(datos.nombre);
+      g("finNombre").textContent = datos.nombre;
+      g("finCiudad").textContent = datos.ciudad + " — " + datos.local;
+      g("pasoFin").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function nuevoReg() {
+      d1 = {}; d2 = {}; dias = [];
+      document.querySelectorAll("input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password]")
+        .forEach(i => i.value = "");
+      document.querySelectorAll(".city-btn").forEach(b => b.classList.remove("sel"));
+      document.querySelectorAll(".day-btn").forEach(b  => b.classList.remove("sel"));
+      g("chkQuiz").checked = false;
+      g("btnFin").disabled = true;
+      document.querySelectorAll(".ferr").forEach(e => e.style.display = "none");
+      document.querySelectorAll(".err").forEach(e  => e.classList.remove("err"));
+      mostrarPaso(1);
+    }
+
+    /* ===== DASHBOARD LOGIN ===== */
+    function abrirLoginDash() {
+      g("dashPwd").value = "";
+      g("e_pwd").style.display = "none";
+      g("loginOv").classList.add("on");
+      setTimeout(() => g("dashPwd").focus(), 80);
+    }
+
+    function cerrarLoginOv() { g("loginOv").classList.remove("on"); }
+
+    function chkPwd() {
+      if (g("dashPwd").value === DASHBOARD_PWD) {
+        cerrarLoginOv();
+        abrirDash();
+      } else {
+        g("e_pwd").style.display = "block";
+        g("dashPwd").value = "";
+        g("dashPwd").focus();
+      }
+    }
+
+    function abrirDash() {
+      g("portalView").style.display = "none";
+      g("dashView").classList.add("on");
+      actualizarDash();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function cerrarDash() {
+      g("dashView").classList.remove("on");
+      g("portalView").style.display = "block";
+    }
+
+    /* ===== DASHBOARD TABLA ===== */
+    function actualizarDash() {
+      g("mTotal").textContent    = registros.length;
+      g("mCompletos").textContent = registros.filter(r => r.estado === "completo").length;
+      g("mProceso").textContent  = registros.filter(r => r.estado !== "completo").length;
+      g("mBee").textContent      = registros.filter(r => !r.beetrackCreada).length;
+      renderTabla(registros);
+    }
+
+    function renderTabla(data) {
+      const tbody = g("tBody"), empty = g("emptyMsg");
+      tbody.innerHTML = "";
+      if (!data.length) { empty.style.display = "block"; return; }
+      empty.style.display = "none";
+      data.forEach((r, i) => {
+        const estB = r.estado === "completo"
+          ? `<span class="badge b-green"><i class="ti ti-check"></i> Completo</span>`
+          : `<span class="badge b-yellow"><i class="ti ti-clock"></i> Proceso</span>`;
+        const beeB = r.beetrackCreada
+          ? `<span class="badge b-green">Creada</span>`
+          : `<span class="badge b-gray">Pendiente</span>`;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${r.nombre||"—"}</strong></td>
+          <td style="font-family:var(--mono);font-size:.78rem">${r.rut||"—"}</td>
+          <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${r.email||"—"}</td>
+          <td style="font-family:var(--mono);font-weight:700">${r.patente||"—"}</td>
+          <td>${r.ciudad||"—"} <span style="font-family:var(--mono);font-size:.73rem;color:var(--c-muted)">${r.local||""}</span></td>
+          <td style="max-width:110px;overflow:hidden;text-overflow:ellipsis">${(r.dias||[]).join(", ")||"—"}</td>
+          <td>${estB}</td>
+          <td>${beeB}</td>
+          <td><button class="btn-ver" onclick="verDriver(${i})">Ver</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filtrar() {
+      const q = g("searchQ").value.toLowerCase();
+      if (!q) { renderTabla(registros); return; }
+      renderTabla(registros.filter(r =>
+        (r.nombre||"").toLowerCase().includes(q) ||
+        (r.patente||"").toLowerCase().includes(q) ||
+        (r.ciudad||"").toLowerCase().includes(q) ||
+        (r.local||"").toLowerCase().includes(q)
+      ));
+    }
+
+    /* ===== MODAL DRIVER ===== */
+    function verDriver(i) {
+      const r = registros[i]; if (!r) return;
+      g("dmAvatar").textContent = initials(r.nombre || "?");
+      g("dmNombre").textContent = r.nombre || "—";
+      g("dmCiudad").textContent = `${r.ciudad||"—"} — ${r.local||"—"}`;
+      g("dmDl").innerHTML = `
+        <dt class="dl-sec" style="margin-top:0;padding-top:0;border-top:none">Datos personales</dt>
+        <dt>RUT</dt>      <dd style="font-family:var(--mono)">${r.rut||"—"}</dd>
+        <dt>Correo</dt>   <dd>${r.email||"—"}</dd>
+        <dt>Teléfono</dt> <dd>${r.tel||"—"}</dd>
+        <dt>Ciudad</dt>   <dd>${r.ciudad||"—"}</dd>
+        <dt>Local</dt>    <dd style="font-family:var(--mono)">${r.local||"—"}</dd>
+        <dt class="dl-sec">Vehículo</dt>
+        <dt>Patente</dt>       <dd style="font-family:var(--mono);font-weight:700">${r.patente||"—"}</dd>
+        <dt>Marca / Modelo</dt><dd>${r.marca||"—"} ${r.modelo||""}</dd>
+        <dt>Dimensiones int.</dt><dd>${r.alto||"?"}cm × ${r.largo||"?"}cm × ${r.ancho||"?"}cm</dd>
+        <dt>Chofer</dt>        <dd>${r.chofer||"—"}</dd>
+        <dt>RUT chofer</dt>    <dd style="font-family:var(--mono)">${r.chofer_rut||"—"}</dd>
+        <dt>Cel. chofer</dt>   <dd>${r.chofer_cel||"—"}</dd>
+        <dt class="dl-sec">Disponibilidad</dt>
+        <dt>Días</dt><dd>${(r.dias||[]).join(" · ")||"—"}</dd>
+        <dt class="dl-sec">Estado</dt>
+        <dt>Registro</dt><dd>${r.estado||"—"}</dd>
+        <div class="bee-toggle">
+          <label class="toggle-sw" title="Beetrack">
+            <input type="checkbox" ${r.beetrackCreada?"checked":""} onchange="toggleBee(${i})" />
+            <span class="toggle-sl"></span>
+          </label>
+          <span style="font-size:.85rem;font-weight:500">Cuenta Beetrack: <strong id="bLbl_${i}">${r.beetrackCreada?"Creada":"Pendiente"}</strong></span>
+        </div>
+      `;
+      g("driverOv").classList.add("on");
+    }
+
+    function toggleBee(i) {
+      registros[i].beetrackCreada = !registros[i].beetrackCreada;
+      g("bLbl_" + i).textContent = registros[i].beetrackCreada ? "Creada" : "Pendiente";
+      actualizarDash();
+    }
+
+    function cerrarDriverOv() { g("driverOv").classList.remove("on"); }
+
+    /* ===== EXPORTAR CSV ===== */
+    function exportCSV() {
+      const H = ["Fecha","Nombre","RUT","Email","Teléfono","Ciudad","Local",
+                 "Patente","Marca","Modelo","Alto cm","Largo cm","Ancho cm",
+                 "Chofer","RUT Chofer","Cel Chofer","Días","Estado","Beetrack"];
+      const rows = registros.map(r => [
+        new Date().toLocaleString("es-CL"),
+        r.nombre||"", r.rut||"", r.email||"", r.tel||"",
+        r.ciudad||"", r.local||"", r.patente||"",
+        r.marca||"", r.modelo||"",
+        r.alto||"", r.largo||"", r.ancho||"",
+        r.chofer||"", r.chofer_rut||"", r.chofer_cel||"",
+        (r.dias||[]).join(" - "), r.estado||"completo",
+        r.beetrackCreada ? "Sí" : "No"
+      ]);
+      const csv = [H, ...rows].map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\r\n");
+      const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+      const url  = URL.createObjectURL(blob);
+      const a    = Object.assign(document.createElement("a"), { href: url, download: "catex-drivers-" + new Date().toISOString().split("T")[0] + ".csv" });
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* ===== CERRAR OVERLAYS AL CLICK FUERA ===== */
+    ["loginOv","driverOv"].forEach(id => {
+      g(id).addEventListener("click", function(e) { if (e.target === this) this.classList.remove("on"); });
     });
-  } catch(err) {
-    console.warn("Sheets error:", err);
-  }
-}
- 
- 
-function chkPwd() {
-  const val = document.getElementById('pwd-input').value;
-  if (val === DASHBOARD_PWD) {
-    dashUnlocked = true;
-    document.getElementById('login-overlay').style.display = 'none';
-    _sv('dsh');
-  } else {
-    document.getElementById('pwd-err').style.display = 'block';
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('pwd-input').focus();
-  }
-}
-</script>
- 
-<!-- LOGIN OVERLAY -->
-<div class="login-overlay" id="login-overlay" style="display:none">
-  <div class="login-box">
-    <div class="login-icon"><i class="ti ti-lock"></i></div>
-    <h2>Acceso supervisores</h2>
-    <p>Ingresa la clave para ver el dashboard</p>
-    <input class="login-input" type="password" id="pwd-input" placeholder="••••••"
-           onkeydown="if(event.key==='Enter') chkPwd()">
-    <p class="login-err" id="pwd-err"><i class="ti ti-alert-circle"></i> Clave incorrecta</p>
-    <button class="login-btn" onclick="chkPwd()">Ingresar</button>
-  </div>
-</div>
- 
+
+    /* ===== INIT ===== */
+    mostrarPaso(1);
+  </script>
+
 </body>
 </html>
