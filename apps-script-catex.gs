@@ -105,29 +105,70 @@ function guardarDatos(data) {
 }
 
 // ----------------------------------------------------------------
-// doGet — maneja GET (con o sin parámetro data)
+// doGet — maneja GET (getAll | data | health-check)
 // ----------------------------------------------------------------
 function doGet(e) {
-  // CORS headers
-  var output;
 
-  // Si llega el parámetro "data", guardar registro
+  // ── Devolver todos los registros del sheet ──────────────────────
+  if (e && e.parameter && e.parameter.action === "getAll") {
+    try {
+      var sheet   = getSheet();
+      var lastRow = sheet.getLastRow();
+      if (lastRow <= 1) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ ok: true, data: [] }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      var values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+      var rows = values.map(function(row) {
+        return {
+          fecha:         row[0]  ? String(row[0]) : "",
+          nombre:        row[1]  || "",
+          rut:           row[2]  || "",
+          email:         row[3]  || "",
+          tel:           String(row[4]  || ""),
+          ciudad:        row[5]  || "",
+          local:         row[6]  || "",
+          patente:       row[7]  || "",
+          marca:         row[8]  || "",
+          modelo:        row[9]  || "",
+          alto:          String(row[10] || ""),
+          largo:         String(row[11] || ""),
+          ancho:         String(row[12] || ""),
+          chofer:        row[13] || "",
+          chofer_rut:    row[14] || "",
+          chofer_cel:    String(row[15] || ""),
+          dias:          row[16] ? String(row[16]).split(" - ") : [],
+          estado:        row[17] || "completo",
+          beetrackCreada: row[18] === "Sí"
+        };
+      });
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, data: rows }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch(err) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: false, error: err.toString() }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
+  // ── Guardar registro desde ?data=JSON ──────────────────────────
   if (e && e.parameter && e.parameter.data) {
     try {
       var data = JSON.parse(e.parameter.data);
       guardarDatos(data);
-      output = ContentService
+      return ContentService
         .createTextOutput(JSON.stringify({ ok: true, message: "Registro guardado correctamente." }))
         .setMimeType(ContentService.MimeType.JSON);
     } catch (err) {
-      output = ContentService
+      return ContentService
         .createTextOutput(JSON.stringify({ ok: false, error: err.toString() }))
         .setMimeType(ContentService.MimeType.JSON);
     }
-    return output;
   }
 
-  // Sin parámetros: respuesta de estado (health check)
+  // ── Health check ────────────────────────────────────────────────
   return ContentService
     .createTextOutput(JSON.stringify({ status: "CATEX API activa" }))
     .setMimeType(ContentService.MimeType.JSON);

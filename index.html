@@ -1164,9 +1164,10 @@
       <div class="dash-header">
         <div>
           <div class="dash-title"><i class="ti ti-layout-dashboard"></i> Dashboard Supervisor</div>
-          <div class="dash-sub">Registros de drivers — sesión actual</div>
+          <div class="dash-sub" id="dashSub">Sincronizando con Google Sheet…</div>
         </div>
         <div class="dash-actions">
+          <button class="btn-export" onclick="cargarDesdeSheet()" style="background:#1D9E75"><i class="ti ti-refresh"></i> Actualizar</button>
           <button class="btn-export" onclick="exportCSV()"><i class="ti ti-download"></i> Exportar CSV</button>
           <button class="btn-exit"   onclick="cerrarDash()"><i class="ti ti-x"></i> Salir</button>
         </div>
@@ -1485,6 +1486,29 @@
       g("dashView").classList.add("on");
       actualizarDash();
       window.scrollTo({ top: 0, behavior: "smooth" });
+      cargarDesdeSheet();
+    }
+
+    async function cargarDesdeSheet() {
+      g("dashSub").textContent = "Sincronizando con Google Sheet…";
+      try {
+        const resp = await fetch(SHEETS_URL + "?action=getAll", { redirect: "follow" });
+        const json = await resp.json();
+        if (json.ok && Array.isArray(json.data)) {
+          // Añadir id incremental a cada fila para compatibilidad con el resto del código
+          registros = json.data.map((r, i) => ({ ...r, id: i + 1, beetrackCreada: !!r.beetrackCreada }));
+          localStorage.setItem('catex_registros', JSON.stringify(registros));
+          actualizarDash();
+          const now = new Date().toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
+          g("dashSub").textContent = registros.length + " registros · actualizado " + now;
+        } else {
+          g("dashSub").textContent = "Error al cargar datos del Sheet";
+        }
+      } catch(err) {
+        // Fallback: usar localStorage si falla la red
+        g("dashSub").textContent = "Sin conexión — mostrando datos locales";
+        actualizarDash();
+      }
     }
 
     function cerrarDash() {
