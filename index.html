@@ -460,6 +460,45 @@
   }
   .toast.show { opacity: 1; }
  
+  /* LOGIN DASHBOARD */
+  .login-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(8,80,65,0.97);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .login-box {
+    background: var(--card); border-radius: var(--radius-lg);
+    padding: 2rem 1.75rem; width: 100%; max-width: 340px;
+    text-align: center;
+    animation: mIn 0.25s ease;
+  }
+  .login-icon {
+    width: 52px; height: 52px; background: var(--green-pale);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 1rem;
+    font-size: 22px; color: var(--green-mid);
+  }
+  .login-box h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .login-box p { font-size: 12px; color: var(--text-2); margin-bottom: 1.25rem; }
+  .login-input {
+    width: 100%; border: 1px solid var(--border-2);
+    border-radius: var(--radius); padding: 10px 13px;
+    font-size: 14px; font-family: var(--font);
+    background: var(--bg); color: var(--text);
+    text-align: center; letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .login-input:focus { outline: none; border-color: var(--green-base); box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+  .login-err { font-size: 12px; color: #E24B4A; margin-bottom: 8px; display: none; }
+  .login-btn {
+    width: 100%; background: var(--green-mid); color: #fff;
+    border: none; border-radius: var(--radius); padding: 11px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: var(--font);
+  }
+  .login-btn:hover { background: var(--green-dark); }
+ 
   /* MOBILE */
   @media (max-width: 480px) {
     .frow { grid-template-columns: 1fr; }
@@ -789,6 +828,9 @@
  
 <script>
 const DIAS_ALL = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwmTu377_Ao8zpGalZ896dl9qyGcxloVMWr7S_ExP1gASOe2XGb5xq8BzDELxD_bojF/exec";
+const DASHBOARD_PWD = "catex2026";
+let dashUnlocked = false;
 const STEP_LBLS = ['Datos personales','Datos del vehículo','Disponibilidad','Material inducción','Quiz y firma'];
 let cs = 0, done = [false,false,false,false,false];
  
@@ -800,6 +842,15 @@ let drivers = [
 ];
  
 function sv(v) {
+  if (v === 'dsh' && !dashUnlocked) {
+    document.getElementById('login-overlay').style.display = 'flex';
+    setTimeout(() => document.getElementById('pwd-input').focus(), 150);
+    return;
+  }
+  _sv(v);
+}
+ 
+function _sv(v) {
   document.getElementById('v-drv').classList.toggle('on', v==='drv');
   document.getElementById('v-dsh').classList.toggle('on', v==='dsh');
   document.getElementById('t-drv').classList.toggle('on', v==='drv');
@@ -920,6 +971,27 @@ function fin() {
   document.getElementById('pl').textContent='¡Registro finalizado!';
   window.scrollTo({top:0, behavior:'smooth'});
   toast('Registro enviado al supervisor');
+  // Enviar a Google Sheets
+  enviarASheets({
+    nombre: nm,
+    rut:    document.getElementById('fr').value,
+    email:  document.getElementById('fe').value,
+    tel:    document.getElementById('ft').value,
+    ciudad: city?.dataset.c || '',
+    local:  city?.dataset.l || '',
+    patente:(document.querySelector('.pp')?.value||'').toUpperCase(),
+    marca:   document.querySelector('.pm')?.value  || '',
+    modelo:  document.querySelector('.pmo')?.value || '',
+    alto:    document.querySelector('.pa')?.value  || '',
+    largo:   document.querySelector('.pla')?.value || '',
+    ancho:   document.querySelector('.pw')?.value  || '',
+    chofer:  document.querySelector('.pc')?.value  || nm,
+    chofer_rut: document.querySelector('.prut')?.value || '',
+    chofer_cel: document.querySelector('.pcel')?.value || '',
+    dias,
+    estado: 'completo',
+    beetrack: false
+  });
 }
  
 function rt() {
@@ -1026,8 +1098,50 @@ function toast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2800);
 }
  
-window.onclick = e => { if(e.target===document.getElementById('ov')) cm(); };
+window.onclick = e => {
+  if (e.target === document.getElementById('ov')) cm();
+};
+ 
+async function enviarASheets(datos) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
+    });
+  } catch(err) {
+    console.warn("Sheets error:", err);
+  }
+}
+ 
+ 
+function chkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === DASHBOARD_PWD) {
+    dashUnlocked = true;
+    document.getElementById('login-overlay').style.display = 'none';
+    _sv('dsh');
+  } else {
+    document.getElementById('pwd-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
 </script>
+ 
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="login-overlay" style="display:none">
+  <div class="login-box">
+    <div class="login-icon"><i class="ti ti-lock"></i></div>
+    <h2>Acceso supervisores</h2>
+    <p>Ingresa la clave para ver el dashboard</p>
+    <input class="login-input" type="password" id="pwd-input" placeholder="••••••"
+           onkeydown="if(event.key==='Enter') chkPwd()">
+    <p class="login-err" id="pwd-err"><i class="ti ti-alert-circle"></i> Clave incorrecta</p>
+    <button class="login-btn" onclick="chkPwd()">Ingresar</button>
+  </div>
+</div>
+ 
 </body>
 </html>
- 
